@@ -1,6 +1,13 @@
 {
 	"supportedWebsites": [
 		{
+			"name": "Substack",
+			"matches": ["[^ ]*://[^ ]*.?substack.com/[^ ]*"],
+			"css": ["./styles/websites/substack.css"],
+			"run_at": "document_start",
+			"favicon": "https://icons.duckduckgo.com/ip3/substack.com.ico"
+		},
+		{
 			"name": "Steam Store & Community",
 			"matches": ["[^ ]*://[^ ]*.?steampowered.com/[^ ]*", "[^ ]*://[^ ]*.?steamcommunity.com/[^ ]*"],
 			"css": ["./styles/websites/steam.css"],

@@ -1,3 +1,4 @@
+import { insertStyles } from "./modules/Styles";
 import type { Browser } from "webextension-polyfill-ts";
 import type { ContentScripts, SupportedWebsite } from "../types/ContentScripts";
 import type { ExtensionSettings, SiteSpecificSetting } from "../types/ExtensionSettings";
@@ -113,7 +114,7 @@ class TransparentZen {
 					if (this.isSupportedWebsite) break;
 
 					if (request.enabled) {
-						browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
+						insertStyles("styles/shared/dynamic-transparency.css");
 						if (!this.transparentZenSettings?.lightweightTransparency) {
 							this.dynamicTransparency?.processPage(true);
 						}
@@ -127,7 +128,7 @@ class TransparentZen {
 
 					if (request.enabled) {
 						this.dynamicTransparency?.removeTransparencyRules();
-						browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
+						insertStyles("styles/shared/dynamic-transparency.css");
 					} else {
 						this.dynamicTransparency?.processPage(true);
 					}
@@ -138,7 +139,7 @@ class TransparentZen {
 
 					if (request.enabled) {
 						if (this.transparentZenSettings?.blacklistedDomains.indexOf(window.location.hostname) >= 0) {
-							browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
+							insertStyles("styles/shared/dynamic-transparency.css");
 							if (!this.transparentZenSettings?.lightweightTransparency) {
 								this.dynamicTransparency?.processPage(true);
 							}
@@ -149,7 +150,7 @@ class TransparentZen {
 						if (this.transparentZenSettings?.blacklistedDomains.indexOf(window.location.hostname) >= 0) {
 							this.dynamicTransparency?.removeTransparencyRules();
 						} else {
-							browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
+							insertStyles("styles/shared/dynamic-transparency.css");
 							if (!this.transparentZenSettings?.lightweightTransparency) {
 								this.dynamicTransparency?.processPage(true);
 							}

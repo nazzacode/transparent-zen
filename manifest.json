@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "Transparent Zen",
+  "name": "Transparent Zen (nazzacode)",
   "version": "0.9.4",
   "description": "Applies custom styles to make your favorite websites transparent. For a full list of supported websites, check https://github.com/frostybiscuit/transparent-zen?tab=readme-ov-file#supported-websites",
   "browser_specific_settings": {
     "gecko": {
-      "id": "{74186d10-f6f2-4f73-b33a-83bb72e50654}",
+      "id": "transparent-zen@nazzacode",
       "data_collection_permissions": {
         "required": [
           "none"
@@ -25,7 +25,8 @@
   ],
   "web_accessible_resources": [
     "assets/images/*.svg",
-    "data/*.json"
+    "data/*.json",
+    "styles/*"
   ],
   "browser_action": {
     "default_popup": "dist/popup/popup.html",

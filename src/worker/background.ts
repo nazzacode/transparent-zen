@@ -1,17 +1,23 @@
-import type { Browser } from "webextension-polyfill-ts";
+import type { Browser, Runtime } from "webextension-polyfill-ts";
 import type { Message } from "../types/Message";
 
 declare const browser: Browser;
 
-browser.runtime.onMessage.addListener((message: Message) => {
+browser.runtime.onMessage.addListener((message: Message, sender: Runtime.MessageSender) => {
+	// from a page → that tab only; from popup/settings (extension page) → every matching tab
+	const fromPage = !sender.url?.startsWith("moz-extension://");
+	const tabId = sender.tab?.id;
 	switch (message.action) {
 		case "insertStyles": {
+			if (fromPage && tabId === undefined) return Promise.resolve({ noTab: true });
+			if (fromPage && tabId !== undefined) return browser.tabs.insertCSS(tabId, { file: message.filePath, frameId: sender.frameId }).then(() => ({ ok: true }));
 			applyStyles(message.filePath, message.domains);
 			break;
 		}
 
 		case "removeStyles": {
-			removeStyles(message.filePath);
+			if (fromPage && tabId !== undefined) browser.tabs.removeCSS(tabId, { file: message.filePath, frameId: sender.frameId });
+			else if (!fromPage) removeStyles(message.filePath);
 			break;
 		}
 	}

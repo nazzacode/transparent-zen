@@ -1,3 +1,4 @@
+import { insertStyles, removeStyles } from "./Styles";
 import type { Browser } from "webextension-polyfill-ts";
 import type { ExtensionSettings } from "../../types/ExtensionSettings";
 
@@ -21,7 +22,7 @@ export class DynamicTransparency {
 		if (this.transparentZenSettings?.enableTransparency) {
 			const isInBlacklist = this.transparentZenSettings?.blacklistedDomains?.indexOf(window.location.hostname) >= 0;
 			if (!this.transparentZenSettings?.blacklistedDomains || (!this.transparentZenSettings.enableWhitelist && !isInBlacklist) || (this.transparentZenSettings.enableWhitelist && isInBlacklist)) {
-				browser.runtime.sendMessage({ action: "insertStyles", filePath: "styles/shared/dynamic-transparency.css" });
+				insertStyles("styles/shared/dynamic-transparency.css");
 				if (!this.transparentZenSettings.lightweightTransparency) {
 					this.processPage();
 				} else {
@@ -161,7 +162,7 @@ export class DynamicTransparency {
 			this.documentObserver.disconnect();
 		}
 
-		browser.runtime.sendMessage({ action: "removeStyles", filePath: "styles/shared/dynamic-transparency.css" });
+		removeStyles("styles/shared/dynamic-transparency.css");
 
 		document.body.style.removeProperty("--color-primary");
 		document.body.style.removeProperty("--color-text");

@@ -1,3 +1,4 @@
+import { insertStyles } from "./Styles";
 import type { Browser } from "webextension-polyfill-ts";
 import type { SupportedWebsite } from "../../types/ContentScripts";
 import type { ExtensionSettings, SiteSpecificSetting } from "../../types/ExtensionSettings";
@@ -31,7 +32,7 @@ export class SupportedSite {
 				return false;
 			}) === -1
 		) {
-			browser.runtime.sendMessage({ action: "insertStyles", filePath: contentScript.css?.[0], domains: contentScript.matches });
+			insertStyles(contentScript.css?.[0], contentScript.matches);
 			this.initBrowserEvents();
 		}
 

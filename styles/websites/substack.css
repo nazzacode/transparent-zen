@@ -1,0 +1,60 @@
+/* Substack: reader, posts (incl. custom domains), dashboard, editor. Styles by nazzacode.
+   Token trick: every Substack surface derives from a small bg palette
+   (--color-{light,dark}-bg-{primary,secondary,…} → rgb(var(--color-primitive-gray-N-rgb))).
+   Redefine the palette translucent on every element (!important beats theme-wrapper redefinitions),
+   then clear the full-page wrappers so the translucent layers don't stack. */
+
+:root,
+:root * {
+	--tz-a1: 0.45; /* page-level panels */
+	--tz-a2: 0.6; /* cards, inputs, hovers */
+	--tz-a3: 0.88; /* menus, popovers, modals (+ blur) */
+	--color-light-bg-primary: rgba(var(--color-primitive-gray-100-rgb), var(--tz-a1)) !important;
+	--color-light-bg-primary-hover: rgba(var(--color-primitive-gray-150-rgb), var(--tz-a2)) !important;
+	--color-light-bg-secondary: rgba(var(--color-primitive-gray-200-rgb), var(--tz-a2)) !important;
+	--color-light-bg-tertiary: rgba(var(--color-primitive-gray-300-rgb), var(--tz-a2)) !important;
+	--color-light-bg-quaternary: rgba(var(--color-primitive-gray-400-rgb), var(--tz-a2)) !important;
+	--color-dark-bg-primary: rgba(var(--color-primitive-gray-900-rgb), var(--tz-a1)) !important;
+	--color-dark-bg-primary-hover: rgba(var(--color-primitive-gray-850-rgb), var(--tz-a2)) !important;
+	--color-dark-bg-secondary: rgba(var(--color-primitive-gray-800-rgb), var(--tz-a2)) !important;
+	--color-dark-bg-tertiary: rgba(var(--color-primitive-gray-700-rgb), var(--tz-a2)) !important;
+	--color-dark-bg-quaternary: rgba(var(--color-primitive-gray-600-rgb), var(--tz-a2)) !important;
+	--color-dark-bg-sunken-primary: rgba(var(--color-primitive-gray-950-rgb), var(--tz-a1)) !important;
+	--color-bg-elevated-primary: color-mix(in srgb, var(--color-bg-primary-hover) 100%, transparent) !important;
+	--web_bg_color: transparent !important;
+}
+
+/* one tint for the whole page; html stays clear for Zen's glass */
+html {
+	background: transparent !important;
+}
+body {
+	background: var(--color-bg-primary, rgba(255, 255, 255, 0.45)) !important;
+}
+
+/* editor has no dark mode (text stays dark) → light glass there regardless of theme, denser for legibility */
+:root:has(.editor-scroll) body {
+	background: rgba(255, 255, 255, 0.62) !important;
+}
+
+/* full-page wrappers that would stack a second translucent layer */
+:is(
+		[class^="dt-root-"],
+		[class*=" dt-root-"],
+		[class^="navigation-"],
+		[class*=" navigation-"],
+		[class^="mainMenuContent-"],
+		[class*=" mainMenuContent-"],
+		.reader-nav-root,
+		.reader-nav-page,
+		.reader-nav-page-scroll,
+		.main.use-theme-bg,
+		.single-post-container
+	) {
+	background: transparent !important;
+}
+
+/* floating surfaces: denser + frosted so text under them doesn't bleed through */
+:is([role="dialog"], [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper] > *, [class*="popover"], [class*="dropdown"], [class*="modal"]) {
+	backdrop-filter: blur(20px) saturate(1.4);
+}
