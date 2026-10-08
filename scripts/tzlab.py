@@ -137,9 +137,9 @@ def main(xpi, out, *urls, settle=float(os.environ.get("TZ_SETTLE", 6))):
     try:
         asyncio.run(run(urls, out, settle))
     finally:
+        # terminate() only reaches the flatpak wrapper; the sandboxed zen lives on → kill by profile
         zen.terminate()
-        try: zen.wait(10)
-        except subprocess.TimeoutExpired: zen.kill()
+        subprocess.run(["pkill", "-f", "^/app/zen/zen .*--profile .*/tzlab"])
 
 
 if __name__ == "__main__":
