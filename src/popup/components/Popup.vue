@@ -98,6 +98,13 @@ const changeSetting = (event: Event) => {
 				await toggleSiteSpecificSettings(input.checked);
 				sendMessageToActiveTabs({ action: "toggleSiteSpecificSettings", value: input.checked });
 				break;
+			case "glass-light":
+				if (extensionSettings.value) extensionSettings.value.glassTheme = input.checked ? "light" : "dark";
+				sendMessageToAllTabs({ action: "changeGlassTheme", value: input.checked ? "light" : "dark" });
+				break;
+			case "glass-opacity":
+				sendMessageToAllTabs({ action: "changeGlassOpacity", value: Number(input.value) });
+				break;
 			case "text-color":
 				sendMessageToAllTabs({ action: "changeTextColor", value: getValidColorOrFallback(input.value, DEFAULT_SETTINGS.textColor) });
 				break;
@@ -227,6 +234,18 @@ const openSettingsPage = () => {
       <section>
 				<h2 class="headline">Settings</h2>
 				<form id="extension-settings">
+					<label class="setting">
+						<input type="checkbox" name="glass-light" :checked="extensionSettings.glassTheme === 'light'" @input="changeSetting">
+						<span class="custom-checkbox"></span>
+						Light glass (default: dark)
+					</label>
+					<div class="setting">
+						<span class="label">Glass opacity</span>
+						<div class="value">
+							<input type="range" min="10" max="90" name="glass-opacity" v-model.number="extensionSettings.glassOpacity" @input="changeSetting">
+							<span class="range-value">{{ extensionSettings.glassOpacity ?? DEFAULT_SETTINGS.glassOpacity }}%</span>
+						</div>
+					</div>
 					<label class="setting">
 						<input type="checkbox" name="enable-transparency" v-model="extensionSettings.enableTransparency" @input="changeSetting">
 						<span class="custom-checkbox"></span>

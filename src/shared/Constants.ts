@@ -15,6 +15,8 @@ export const DEFAULT_SETTINGS: ExtensionSettings["transparentZenSettings"] = {
 	disabledWebsites: [],
 	blacklistedDomains: [],
 	siteSpecificSettings: [],
+	glassTheme: "dark",
+	glassOpacity: 45,
 };
 
 export const GITHUB_ENDPOINTS = {

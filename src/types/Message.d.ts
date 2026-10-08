@@ -18,6 +18,8 @@ export type Message = {
 		| "toggleSiteSpecificSettings"
 		| "toggleInspector"
 		| "addCustomBackground"
+		| "changeGlassTheme"
+		| "changeGlassOpacity"
 		| "insertStyles"
 		| "removeStyles";
 	data?: unknown;

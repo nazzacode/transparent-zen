@@ -24,6 +24,7 @@ class TransparentZen {
 		this.checkIfWebsiteAlreadySupported().then(contentScript => {
 			browser.storage.local.get("transparentZenSettings").then(async (settings) => {
 				this.transparentZenSettings = (settings as ExtensionSettings).transparentZenSettings;
+				this.applyGlass(this.transparentZenSettings?.glassTheme, this.transparentZenSettings?.glassOpacity);
 				if (!contentScript) {
 					console.info("Website is not supported by Transparent Zen");
 					this.webInspector = new WebInspector(this.transparentZenSettings);
@@ -202,6 +203,14 @@ class TransparentZen {
 					this.applyCustomProperty("--custom-background-image-blur", `blur(${request.value}px)`);
 					break;
 				}
+				case "changeGlassTheme": {
+					this.applyGlass(request.value as "dark" | "light", undefined);
+					break;
+				}
+				case "changeGlassOpacity": {
+					this.applyGlass(undefined, request.value as number);
+					break;
+				}
 				case "changeBackgroundImageBrightness": {
 					this.applyCustomProperty("--custom-background-image-brightness", `brightness(${(request.value as number) / 100})`);
 					break;
@@ -266,6 +275,13 @@ class TransparentZen {
 				}
 			}
 		}
+	}
+
+	// glass mode for site styles: :root[data-tz-glass] + --tz-glass-alpha (set early → no flash)
+	private applyGlass(theme?: "dark" | "light", opacity?: number): void {
+		if (theme) document.documentElement.dataset.tzGlass = theme;
+		else if (!document.documentElement.dataset.tzGlass) document.documentElement.dataset.tzGlass = "dark";
+		if (opacity !== undefined) document.documentElement.style.setProperty("--tz-glass-alpha", String(opacity / 100));
 	}
 
 	private initExtensionSettingsStyles(): void {

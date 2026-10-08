@@ -62,7 +62,9 @@ PROBE = r"""
     offenders: [...hits.values()].sort((a, b) => b.n - a.n).slice(0, 12) });
 })()
 """
-MAGENTA = "document.head.insertAdjacentHTML('beforeend','<style id=tzlab>html:root:root{background:#f0f!important}</style>')"
+# TZ_BACKDROP: what sits behind the page (default magenta = coverage check; e.g. a wallpaper-ish gradient for legibility)
+BACKDROP = os.environ.get("TZ_BACKDROP", "#f0f")
+MAGENTA = f"document.head.insertAdjacentHTML('beforeend','<style id=tzlab>html:root:root{{background:{BACKDROP}!important}}</style>')"
 
 
 def setup(xpi):
