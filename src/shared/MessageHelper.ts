@@ -9,7 +9,7 @@ export const sendMessageToWorker = (message: Message): void => {
 };
 
 export const sendMessageToAllTabs = async (message: Message) => {
-	const tabs = await browser.tabs.query({ currentWindow: true });
+	const tabs = await browser.tabs.query({}); // all windows: web apps (Taskbar Tabs) are their own windows
 
 	for (const tab of tabs) {
 		if (!tab.url?.startsWith("moz-extension://")) {
@@ -19,7 +19,7 @@ export const sendMessageToAllTabs = async (message: Message) => {
 };
 
 export const sendMessageToDomainTabs = async (domain: string, message: Message) => {
-	const tabs = await browser.tabs.query({ currentWindow: true });
+	const tabs = await browser.tabs.query({}); // all windows: web apps (Taskbar Tabs) are their own windows
 
 	for (const tab of tabs) {
 		if (!tab.url) return;
