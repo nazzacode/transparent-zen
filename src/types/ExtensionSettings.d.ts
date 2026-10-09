@@ -16,7 +16,7 @@ export type ExtensionSettings = {
 		disabledWebsites: Array<SupportedWebsite>;
 		blacklistedDomains: Array<string>;
 		siteSpecificSettings: Array<SiteSpecificSetting>;
-		glassTheme?: "dark" | "light";
+		glassTheme?: "auto" | "dark" | "light"; // auto = follow prefers-color-scheme (desktop theme)
 		glassOpacity?: number;
 	};
 };

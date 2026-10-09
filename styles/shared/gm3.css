@@ -1,0 +1,79 @@
+@import url("./glass.css");
+
+/* Google Material 3 apps (Calendar, Gmail, Drive, …): GM3 tokens (--gm3-sys-color-*, + -rgb twins) → shared glass tiers.
+   One mapping for every Google app → identical surfaces/text across them. Site files @import this, then add only
+   their region/leftover rules. Google redefines GM3 tokens on inner elements → overrides hit every element (:root *).
+   frame (top bar, nav) = body tint · main surfaces = content · menus/dialogs/search = popover. */
+
+:root,
+:root * {
+	/* frame: let body's --g-frame show */
+	--gm3-sys-color-background: transparent !important;
+	--gm3-sys-color-surface-container-low: transparent !important;
+	/* main pane surfaces (site file may clear these and paint one region instead, see calendar.google.css) */
+	--gm3-sys-color-surface: var(--g-content) !important;
+	--gm3-sys-color-surface-bright: var(--g-content) !important;
+	--gm3-sys-color-surface-container-lowest: var(--g-content) !important;
+	/* menus, dialogs, search field */
+	--gm3-sys-color-surface-container: var(--g-popover) !important;
+	--gm3-sys-color-surface-container-high: var(--g-popover) !important;
+	/* small fills */
+	--gm3-sys-color-surface-container-highest: var(--g-fill-selected) !important;
+	--gm3-sys-color-surface-variant: var(--g-fill) !important;
+	--gm3-sys-color-surface-dim: var(--g-fill) !important;
+	/* -rgb twins feed Google's state layers (rgba(var(--…-rgb), .08)) */
+	--gm3-sys-color-background-rgb: var(--g-rgb) !important;
+	--gm3-sys-color-surface-rgb: var(--g-rgb) !important;
+	--gm3-sys-color-surface-container-rgb: var(--g-rgb-raised) !important;
+	--gm3-sys-color-surface-container-high-rgb: var(--g-rgb-raised) !important;
+
+	/* text + lines */
+	--gm3-sys-color-on-background: var(--g-fg) !important;
+	--gm3-sys-color-on-surface: var(--g-fg) !important;
+	--gm3-sys-color-on-surface-variant: var(--g-fg-2) !important;
+	--gm3-sys-color-outline: var(--g-fg-3) !important;
+	--gm3-sys-color-outline-variant: var(--g-line) !important;
+}
+
+/* dark: GM3 dark baseline for accents/containers + rgb twins of the text tokens */
+:root:not([data-tz-glass="light"]),
+:root:not([data-tz-glass="light"]) * {
+	--gm3-sys-color-on-background-rgb: 242, 242, 245 !important;
+	--gm3-sys-color-on-surface-rgb: 242, 242, 245 !important;
+	--gm3-sys-color-on-surface-variant-rgb: 180, 180, 188 !important;
+	--gm3-sys-color-outline-rgb: 142, 142, 150 !important;
+	--gm3-sys-color-primary: #a8c7fa !important;
+	--gm3-sys-color-primary-rgb: 168, 199, 250 !important;
+	--gm3-sys-color-on-primary: #062e6f !important;
+	--gm3-sys-color-primary-container: #0842a0 !important;
+	--gm3-sys-color-primary-container-rgb: 8, 66, 160 !important;
+	--gm3-sys-color-on-primary-container: #d3e3fd !important;
+	--gm3-sys-color-secondary-container: #004a77 !important;
+	--gm3-sys-color-secondary-container-rgb: 0, 74, 119 !important;
+	--gm3-sys-color-on-secondary-container: #c2e7ff !important;
+	--gm3-sys-color-tertiary-container: #0f5223 !important;
+	--gm3-sys-color-on-tertiary-container: #c4eed0 !important;
+	--gm3-sys-color-error-container: #8c1d18 !important;
+	--gm3-sys-color-on-error-container: #f9dedc !important;
+	--gm3-sys-color-inverse-surface: #e3e3e3 !important;
+	--gm3-sys-color-inverse-surface-rgb: 227, 227, 227 !important;
+	--gm3-sys-color-inverse-on-surface: #303030 !important;
+	--gm3-sys-color-inverse-on-surface-rgb: 48, 48, 48 !important;
+}
+
+/* event chips: colour comes inline (user's calendar colours); Google picks their text from surface (dark chips → white)
+   or on-surface (pastel → dark). Restore Google's light tokens inside them → chips render exactly as Google draws them. */
+[style*="background-color"],
+[style*="background-color"] * {
+	--gm3-sys-color-background: #fff !important;
+	--gm3-sys-color-surface: #fff !important;
+	--gm3-sys-color-surface-bright: #fff !important;
+	--gm3-sys-color-surface-container-lowest: #fff !important;
+	--gm3-sys-color-surface-container-low: #f8fafd !important;
+	--gm3-sys-color-on-background: #1f1f1f !important;
+	--gm3-sys-color-on-surface: #1f1f1f !important;
+	--gm3-sys-color-on-surface-rgb: 31, 31, 31 !important;
+	--gm3-sys-color-on-surface-variant: #444746 !important;
+	--gm3-sys-color-on-surface-variant-rgb: 68, 71, 70 !important;
+}
+

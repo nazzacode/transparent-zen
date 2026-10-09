@@ -98,9 +98,9 @@ const changeSetting = (event: Event) => {
 				await toggleSiteSpecificSettings(input.checked);
 				sendMessageToActiveTabs({ action: "toggleSiteSpecificSettings", value: input.checked });
 				break;
-			case "glass-light":
-				if (extensionSettings.value) extensionSettings.value.glassTheme = input.checked ? "light" : "dark";
-				sendMessageToAllTabs({ action: "changeGlassTheme", value: input.checked ? "light" : "dark" });
+			case "glass-theme":
+				if (extensionSettings.value) extensionSettings.value.glassTheme = input.value as "auto" | "dark" | "light";
+				sendMessageToAllTabs({ action: "changeGlassTheme", value: input.value });
 				break;
 			case "glass-opacity":
 				sendMessageToAllTabs({ action: "changeGlassOpacity", value: Number(input.value) });
@@ -234,11 +234,16 @@ const openSettingsPage = () => {
       <section>
 				<h2 class="headline">Settings</h2>
 				<form id="extension-settings">
-					<label class="setting">
-						<input type="checkbox" name="glass-light" :checked="extensionSettings.glassTheme === 'light'" @input="changeSetting">
-						<span class="custom-checkbox"></span>
-						Light glass (default: dark)
-					</label>
+					<div class="setting">
+						<span class="label">Glass</span>
+						<div class="value">
+							<select name="glass-theme" :value="extensionSettings.glassTheme ?? DEFAULT_SETTINGS.glassTheme" @input="changeSetting">
+								<option value="auto">Auto (follow desktop)</option>
+								<option value="dark">Dark</option>
+								<option value="light">Light</option>
+							</select>
+						</div>
+					</div>
 					<div class="setting">
 						<span class="label">Glass opacity</span>
 						<div class="value">
@@ -373,4 +378,4 @@ const openSettingsPage = () => {
 			<a href="https://github.com/frostybiscuit/transparent-zen">GitHub Repository</a>
 		</footer>
   </div>
-</template>
+</template>

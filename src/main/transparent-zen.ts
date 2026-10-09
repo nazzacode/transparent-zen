@@ -204,7 +204,7 @@ class TransparentZen {
 					break;
 				}
 				case "changeGlassTheme": {
-					this.applyGlass(request.value as "dark" | "light", undefined);
+					this.applyGlass(request.value as "auto" | "dark" | "light", undefined);
 					break;
 				}
 				case "changeGlassOpacity": {
@@ -277,10 +277,19 @@ class TransparentZen {
 		}
 	}
 
-	// glass mode for site styles: :root[data-tz-glass] + --tz-glass-alpha (set early → no flash)
-	private applyGlass(theme?: "dark" | "light", opacity?: number): void {
-		if (theme) document.documentElement.dataset.tzGlass = theme;
-		else if (!document.documentElement.dataset.tzGlass) document.documentElement.dataset.tzGlass = "dark";
+	// glass mode for site styles (styles/shared/glass.css): :root[data-tz-glass=dark|light] + --tz-glass-alpha, set early → no flash.
+	// "auto" (default) follows prefers-color-scheme, i.e. the desktop light/dark theme, live.
+	private glassTheme: "auto" | "dark" | "light" = "auto";
+	private static readonly lightScheme = window.matchMedia("(prefers-color-scheme: light)");
+
+	private applyGlass(theme?: "auto" | "dark" | "light", opacity?: number): void {
+		if (theme) this.glassTheme = theme;
+		const resolve = () => {
+			document.documentElement.dataset.tzGlass =
+				this.glassTheme === "auto" ? (TransparentZen.lightScheme.matches ? "light" : "dark") : this.glassTheme;
+		};
+		resolve();
+		TransparentZen.lightScheme.onchange = resolve;
 		if (opacity !== undefined) document.documentElement.style.setProperty("--tz-glass-alpha", String(opacity / 100));
 	}
 

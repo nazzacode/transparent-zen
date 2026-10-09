@@ -10,4 +10,4 @@ config.json
 # Node.js dependencies
 node_modules/
 dist/
-builds/
+builds/__pycache__/

@@ -1,0 +1,126 @@
+/* nathanOS glass — the one source of truth for every site style (styles/websites/*.css @import this).
+   Model: Apple Liquid Glass tiers, adapted to a desktop where the compositor blur behind the window is fixed
+   (no adaptive tinting like Apple's) → every text-bearing tier has a readability floor.
+   Inputs (set by the content script on :root):
+     --tz-glass-alpha   popup slider, 0.10–0.90 (default .45)
+     [data-tz-glass]    dark | light (popup: auto follows the desktop theme)
+   Site files only MAP their own tokens/regions onto the tiers below; they never invent alphas or colours.
+
+   tier      role (Apple)                                   alpha (s = slider)
+   window    page backdrop, gaps between panes              s
+   chrome    sidebars, top bars, nav rails (glass layer)    clamp(.45, s+.10, .92)   light floor .75
+   content   lists, reading panes, grids (content layer)    clamp(.76, s+.25, .96)   light floor .88
+   popover   menus, dialogs, tooltips ("thicker" glass)     clamp(.85, s+.35, .96)   light floor .88  + blur
+   rows / controls: fixed overlay fills (no slider); text: solid colours only, never low-alpha text on glass.
+
+   Stacking (typical app = frame + pane): body carries the FRAME tint (--g-frame = chrome tier, absolute), panes sit on
+   it with compensated fills ((a - frame) / (1 - frame)) so each region lands on its tier's TOTAL alpha.
+     --g-frame     body / app shell                          (chrome tier, absolute)
+     --g-content   pane inside the frame                     (content tier total)
+     --g-*-abs     surfaces floating over clear glass (rare)
+   A site whose design is "content on wallpaper" with no frame can set body to --g-window instead. */
+
+:root {
+	--g-s: var(--tz-glass-alpha, 0.45);
+
+	--g-a-window: var(--g-s);
+	--g-a-chrome: clamp(var(--g-floor-chrome), calc(var(--g-s) + 0.1), 0.92);
+	--g-a-content: clamp(var(--g-floor-content), calc(var(--g-s) + 0.25), 0.96);
+	--g-a-popover: clamp(var(--g-floor-popover), calc(var(--g-s) + 0.35), 0.96);
+	--g-a-content-on: max(0, calc((var(--g-a-content) - var(--g-a-chrome)) / (1 - var(--g-a-chrome))));
+
+	/* dark (default) */
+	--g-floor-chrome: 0.45;
+	--g-floor-content: 0.76; /* Apple keeps content near-solid; .76 = long secondary text readable over p95 wallpaper (glasslab) */
+	--g-floor-popover: 0.85;
+	--g-rgb: 22, 22, 26; /* base tint: neutral, faintly cool (DMS Apple greys) */
+	--g-rgb-raised: 38, 38, 44; /* popovers, cards */
+	--g-fg: #f2f2f5;
+	--g-fg-2: #dadade; /* secondary: bright enough for 11px labels at the content floor (APCA Lc60 over p95 wallpaper) */
+	--g-fg-3: #a8a8b0;
+	--g-accent: #0a84ff; /* DMS nathanos-theme dark primary */
+	/* status text (Apple accessible system colours: readable as small text on glass) */
+	--g-red: #ff9e98; /* lighter than Apple's #ff6961: 14px status text over bright wallpaper (glasslab) */
+	--g-orange: #ffc266;
+	--g-green: #5fe07f;
+	--g-blue: #6cb4ff;
+	--g-on-accent: #fff;
+	--g-line: rgba(255, 255, 255, 0.1);
+	--g-line-strong: rgba(255, 255, 255, 0.16);
+	--g-fill: rgba(255, 255, 255, 0.05); /* controls, chips, inputs */
+	--g-fill-hover: rgba(255, 255, 255, 0.07);
+	--g-fill-selected: rgba(10, 132, 255, 0.24); /* selection = accent tint (Apple), not white: keeps light text readable */
+	--g-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08); /* specular top edge */
+	--g-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+	--g-blur: blur(24px) saturate(160%);
+	--g-scrim: rgba(0, 0, 0, 0.35); /* Apple's dimming layer */
+	--g-scrollbar: rgba(255, 255, 255, 0.28) transparent;
+
+	/* composed surfaces */
+	--g-window: rgba(var(--g-rgb), var(--g-a-window));
+	--g-frame: rgba(var(--g-rgb), var(--g-a-chrome));
+	--g-content: rgba(var(--g-rgb), var(--g-a-content-on));
+	--g-content-abs: rgba(var(--g-rgb), var(--g-a-content));
+	--g-popover: rgba(var(--g-rgb-raised), var(--g-a-popover));
+	--g-card: rgba(var(--g-rgb-raised), 0.5); /* raised block on content */
+	/* paper: USER content that carries its own colours (HTML email, documents) → light sheet in both modes (Apple Mail) */
+	--g-paper: rgba(250, 250, 252, 0.97);
+	--g-paper-fg: #1f1f1f;
+}
+
+:root[data-tz-glass="light"] {
+	--g-floor-chrome: 0.75; /* light glass over dark wallpaper (e.g. space) is the hard case → frosted */
+	--g-floor-content: 0.88;
+	--g-floor-popover: 0.88;
+	--g-rgb: 246, 246, 248;
+	--g-rgb-raised: 255, 255, 255;
+	--g-fg: #1c1c1e;
+	--g-fg-2: #333338;
+	--g-fg-3: #5a5a62;
+	--g-accent: #007aff; /* DMS nathanos-theme light primary */
+	--g-red: #b5000f;
+	--g-orange: #a32a00;
+	--g-green: #1d7032;
+	--g-blue: #0035b8;
+	--g-line: rgba(0, 0, 0, 0.08);
+	--g-line-strong: rgba(0, 0, 0, 0.14);
+	--g-fill: rgba(0, 0, 0, 0.04);
+	--g-fill-hover: rgba(0, 0, 0, 0.06);
+	--g-fill-selected: rgba(0, 122, 255, 0.1);
+	--g-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	--g-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+	--g-scrim: rgba(0, 0, 0, 0.2);
+	--g-scrollbar: rgba(0, 0, 0, 0.25) transparent;
+}
+
+/* accessibility: reduce transparency → same colours, solid */
+@media (prefers-reduced-transparency: reduce) {
+	:root {
+		--g-s: 1;
+		--g-floor-chrome: 1;
+		--g-floor-content: 1;
+		--g-floor-popover: 1;
+	}
+}
+
+/* shared mechanics every glass site wants */
+:root.tz-initialized {
+	color-scheme: dark;
+	scrollbar-color: var(--g-scrollbar);
+}
+:root.tz-initialized[data-tz-glass="light"] {
+	color-scheme: light;
+}
+:root.tz-initialized,
+:root.tz-initialized body {
+	background: transparent !important;
+}
+:root.tz-initialized body {
+	background: var(--g-frame) !important;
+}
+:root.tz-initialized * {
+	scrollbar-color: var(--g-scrollbar);
+}
+
+/* helper classes for site files that can't use tokens (applied via selectors, not markup) are not provided on
+   purpose: map regions with selectors in the site file, e.g.  .sidebar { background: var(--g-chrome) !important; } */

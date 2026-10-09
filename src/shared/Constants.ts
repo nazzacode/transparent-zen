@@ -15,7 +15,7 @@ export const DEFAULT_SETTINGS: ExtensionSettings["transparentZenSettings"] = {
 	disabledWebsites: [],
 	blacklistedDomains: [],
 	siteSpecificSettings: [],
-	glassTheme: "dark",
+	glassTheme: "auto",
 	glassOpacity: 45,
 };
 
