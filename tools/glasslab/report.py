@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-"""glassreport: local HTML report for a glasslab run (results matrix, galleries, principles, mood board).
+"""glasslab report: local HTML report for a run (coverage, principles, tiers, mood board, results matrix, galleries).
+Local file on purpose: screenshots show real inboxes/calendars → never publish it."""
+import html, json, os, urllib.request
+from pathlib import Path
 
-  glassreport.py RUNDIR        → RUNDIR/report.html (images: RUNDIR/gallery/*.jpg, built by glasslab runs)
-Local file on purpose: screenshots show real inboxes/calendars → never published.
-"""
-import html, json, os, sys
+from PIL import Image
 
 PRINCIPLES = [
     ("Two layers", "Glass is the navigation layer (sidebars, top bars, menus). Content (lists, reading panes, grids) sits on a near-solid material. Apple: “Don’t use Liquid Glass in the content layer.”"),
@@ -33,6 +32,33 @@ TIERS = [("window", "s", "s"), ("frame / chrome", "clamp(.50, s+.10, .92)", "cla
          ("paper", "rgba(250,250,252,.97)", "same")]
 
 
+def gallery(run):
+    """jpg gallery from the run's composites (shots/*.png) + offline copies of the mood board images"""
+    run = Path(run)
+    g = run / "gallery"
+    (g / "mood").mkdir(parents=True, exist_ok=True)
+    for f in (run / "shots").glob("*.png"):
+        k = f.stem.split(".", 1)[1] if "." in f.stem else ""
+        if k in ("native", "dark.45", "light.45"):
+            im = Image.open(f).convert("RGB")
+            im.resize((1000, int(im.height * 1000 / im.width))).save(g / f"{f.stem}.jpg", quality=82)
+    gm = sorted(run.glob("shots/gmail-thread.dark.*.png"))
+    if len(gm) == 3:
+        strip = Image.new("RGB", (2100, 500))
+        for x, f in enumerate(sorted(gm, key=lambda p: int(p.stem.rsplit(".", 1)[1]))):
+            strip.paste(Image.open(f).convert("RGB").resize((700, 500)), (x * 700, 0))
+        strip.save(g / "strip-slider-gmail.jpg", quality=80)
+    if (run / "sheet-reader-doc.jpg").exists():
+        im = Image.open(run / "sheet-reader-doc.jpg"); im.thumbnail((2000, 2000)); im.save(g / "sheet-reader-doc.jpg", quality=78)
+    for i, (_, url, _) in enumerate(MOOD):
+        p = g / "mood" / f"m{i}.{url.rsplit('.', 1)[1]}"
+        if not p.exists():
+            try:
+                p.write_bytes(urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read())
+            except OSError:
+                pass
+
+
 def local(run, i, url):
     """mood images are downloaded to gallery/mood/m<i>.<ext> (offline, no hotlinking); fall back to the URL"""
     p = f"gallery/mood/m{i}.{url.rsplit('.', 1)[1]}"
@@ -48,13 +74,14 @@ def cell(v, target):
 
 
 def main(run):
-    R = json.load(open(f"{run}/report.json"))
+    gallery(run)
+    R = json.load(open(f"{run}/results.json"))
     screens = list(dict.fromkeys(r["screen"] for r in R))
     rows = []
     for r in R:
-        u = r.get("unity", {})
+        c = r["contrast"] + r["contrast"][-1:]
         rows.append(f"<tr><td>{r['screen']}</td><td>{r['mode']}</td><td>{int(r['alpha']*100)}%</td><td>{r['texts']}</td>"
-                    + cell(r['pass'][0], .9) + cell(r['pass'][1], .9) + cell(u.get('surface', 0), .9) + cell(u.get('text', 0), .85) + "</tr>")
+                    + cell(c[0], .9) + cell(c[1], .9) + cell(r['surface'], .9) + cell(r['text'], .85) + "</tr>")
     gal = []
     for s in screens:
         imgs = [(k, f"gallery/{s}.{k}.jpg") for k in ("native", "dark.45", "light.45") if os.path.exists(f"{run}/gallery/{s}.{k}.jpg")]
@@ -129,7 +156,6 @@ Rerun: <code>nix-shell -p "python3.withPackages(p:[p.websockets p.pillow p.numpy
 </main></body></html>"""
     open(f"{run}/report.html", "w").write(page)
     print(f"{run}/report.html")
+    return f"{run}/report.html"
 
 
-if __name__ == "__main__":
-    main(sys.argv[1])

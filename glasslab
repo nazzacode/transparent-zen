@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# glasslab — liquid-glass site styles: test / discover / new-site / wallpapers / report. Docs: docs/GLASS.md
+cd "$(dirname "$0")"
+if python3 -c 'import websockets, PIL, numpy' 2>/dev/null; then exec python3 -m tools.glasslab "$@"; fi
+exec nix-shell shell.nix --run "python3 -m tools.glasslab $(printf '%q ' "$@")"

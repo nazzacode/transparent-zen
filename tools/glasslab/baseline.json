@@ -1,0 +1,398 @@
+{
+ "gcal-event.dark.10": {
+  "contrast": 1.0,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-event.dark.45": {
+  "contrast": 1.0,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-event.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-event.light.10": {
+  "contrast": 0.993,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-event.light.45": {
+  "contrast": 0.993,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-event.light.90": {
+  "contrast": 1.0,
+  "surface": 0.988,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.dark.10": {
+  "contrast": 0.999,
+  "surface": 0.989,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.dark.45": {
+  "contrast": 0.999,
+  "surface": 0.989,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.dark.90": {
+  "contrast": 0.999,
+  "surface": 0.989,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.light.10": {
+  "contrast": 1.0,
+  "surface": 0.993,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.light.45": {
+  "contrast": 1.0,
+  "surface": 0.993,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-month.light.90": {
+  "contrast": 1.0,
+  "surface": 0.993,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.dark.10": {
+  "contrast": 1.0,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.dark.45": {
+  "contrast": 1.0,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.light.10": {
+  "contrast": 0.984,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.light.45": {
+  "contrast": 0.984,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gcal-week.light.90": {
+  "contrast": 1.0,
+  "surface": 0.987,
+  "text": 1.0,
+  "ok": true
+ },
+ "gmail-inbox.dark.10": {
+  "contrast": 0.978,
+  "surface": 0.976,
+  "text": 0.991,
+  "ok": true
+ },
+ "gmail-inbox.dark.45": {
+  "contrast": 0.978,
+  "surface": 0.976,
+  "text": 0.991,
+  "ok": true
+ },
+ "gmail-inbox.dark.90": {
+  "contrast": 0.991,
+  "surface": 0.976,
+  "text": 0.991,
+  "ok": true
+ },
+ "gmail-inbox.light.10": {
+  "contrast": 1.0,
+  "surface": 0.976,
+  "text": 1.0,
+  "ok": true
+ },
+ "gmail-inbox.light.45": {
+  "contrast": 1.0,
+  "surface": 0.976,
+  "text": 1.0,
+  "ok": true
+ },
+ "gmail-inbox.light.90": {
+  "contrast": 1.0,
+  "surface": 0.976,
+  "text": 1.0,
+  "ok": true
+ },
+ "gmail-thread.dark.10": {
+  "contrast": 0.982,
+  "surface": 0.976,
+  "text": 0.972,
+  "ok": true
+ },
+ "gmail-thread.dark.45": {
+  "contrast": 0.982,
+  "surface": 0.976,
+  "text": 0.972,
+  "ok": true
+ },
+ "gmail-thread.dark.90": {
+  "contrast": 0.993,
+  "surface": 0.976,
+  "text": 0.972,
+  "ok": true
+ },
+ "gmail-thread.light.10": {
+  "contrast": 0.995,
+  "surface": 0.976,
+  "text": 0.998,
+  "ok": true
+ },
+ "gmail-thread.light.45": {
+  "contrast": 0.995,
+  "surface": 0.976,
+  "text": 0.998,
+  "ok": true
+ },
+ "gmail-thread.light.90": {
+  "contrast": 0.995,
+  "surface": 0.976,
+  "text": 0.998,
+  "ok": true
+ },
+ "google-search.dark.10": {
+  "contrast": 0.988,
+  "surface": 1,
+  "text": 0.967,
+  "ok": true
+ },
+ "google-search.dark.45": {
+  "contrast": 0.988,
+  "surface": 1,
+  "text": 0.967,
+  "ok": true
+ },
+ "google-search.dark.90": {
+  "contrast": 0.988,
+  "surface": 1,
+  "text": 0.967,
+  "ok": true
+ },
+ "google-search.light.10": {
+  "contrast": 0.988,
+  "surface": 1,
+  "text": 0.988,
+  "ok": true
+ },
+ "google-search.light.45": {
+  "contrast": 0.988,
+  "surface": 1,
+  "text": 0.988,
+  "ok": true
+ },
+ "google-search.light.90": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 0.988,
+  "ok": true
+ },
+ "reader-doc.dark.10": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-doc.dark.45": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-doc.dark.90": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-doc.light.10": {
+  "contrast": 0.99,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-doc.light.45": {
+  "contrast": 0.99,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-doc.light.90": {
+  "contrast": 0.99,
+  "surface": 1,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.dark.10": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.dark.45": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.light.10": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.light.45": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "reader-library.light.90": {
+  "contrast": 1.0,
+  "surface": 0.996,
+  "text": 1.0,
+  "ok": true
+ },
+ "spotify-artist.dark.10": {
+  "contrast": 1.0,
+  "surface": 0.995,
+  "text": 0.929,
+  "ok": true
+ },
+ "spotify-artist.dark.45": {
+  "contrast": 1.0,
+  "surface": 0.995,
+  "text": 0.929,
+  "ok": true
+ },
+ "spotify-artist.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.995,
+  "text": 0.929,
+  "ok": true
+ },
+ "spotify-home.dark.10": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 0.946,
+  "ok": true
+ },
+ "spotify-home.dark.45": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 0.946,
+  "ok": true
+ },
+ "spotify-home.dark.90": {
+  "contrast": 1.0,
+  "surface": 1,
+  "text": 0.946,
+  "ok": true
+ },
+ "substack-home.dark.10": {
+  "contrast": 0.967,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "substack-home.dark.45": {
+  "contrast": 0.967,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "substack-home.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "substack-home.light.10": {
+  "contrast": 0.967,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "substack-home.light.45": {
+  "contrast": 0.967,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "substack-home.light.90": {
+  "contrast": 1.0,
+  "surface": 0.991,
+  "text": 0.947,
+  "ok": true
+ },
+ "youtube-home.dark.10": {
+  "contrast": 0.965,
+  "surface": 0.995,
+  "text": 0.965,
+  "ok": true
+ },
+ "youtube-home.dark.45": {
+  "contrast": 0.965,
+  "surface": 0.995,
+  "text": 0.965,
+  "ok": true
+ },
+ "youtube-home.dark.90": {
+  "contrast": 1.0,
+  "surface": 0.995,
+  "text": 0.965,
+  "ok": true
+ },
+ "youtube-home.light.10": {
+  "contrast": 0.929,
+  "surface": 0.995,
+  "text": 0.935,
+  "ok": true
+ },
+ "youtube-home.light.45": {
+  "contrast": 0.929,
+  "surface": 0.995,
+  "text": 0.935,
+  "ok": true
+ },
+ "youtube-home.light.90": {
+  "contrast": 0.97,
+  "surface": 0.995,
+  "text": 0.935,
+  "ok": true
+ }
+}

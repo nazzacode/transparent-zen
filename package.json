@@ -13,7 +13,9 @@
     "watch": "web-ext run --config web-ext-config.mjs",
     "sign": "web-ext sign --config web-ext-config.mjs",
     "lint": "biome check && web-ext lint --config web-ext-config.mjs",
-    "lint:fix": "biome check --write"
+    "lint:fix": "biome check --write",
+    "glass:test": "./glasslab test --compare",
+    "glass:report": "./glasslab report"
   },
   "type": "module",
   "author": "FrostyBiscuit",

@@ -1,0 +1,72 @@
+{
+ "_doc": "glasslab test screens. id = <site>-<view>; act = JS run after load (READ-ONLY: never send/archive/mark; open only already-read items); modes = restrict glass modes (forced-dark sites); settle = seconds to wait after load (default 7).",
+ "screens": [
+  {
+   "id": "gcal-week",
+   "url": "https://calendar.google.com/calendar/r/week"
+  },
+  {
+   "id": "gcal-month",
+   "url": "https://calendar.google.com/calendar/r/month"
+  },
+  {
+   "id": "gcal-event",
+   "url": "https://calendar.google.com/calendar/r/week",
+   "act": "document.querySelector('[data-eventid][role=button]')?.click()"
+  },
+  {
+   "id": "gmail-inbox",
+   "url": "https://mail.google.com/mail/u/0/#inbox"
+  },
+  {
+   "id": "gmail-thread",
+   "url": "https://mail.google.com/mail/u/0/#inbox",
+   "act": "[...document.querySelectorAll('tr.zA')].find(r=>r.classList.contains('yO'))?.click()"
+  },
+  {
+   "id": "reader-library",
+   "url": "https://read.readwise.io/later"
+  },
+  {
+   "id": "reader-doc",
+   "url": "https://read.readwise.io/archive",
+   "act": "document.querySelector('a[href*=\"/read/\"]')?.click()"
+  },
+  {
+   "id": "claude-home",
+   "url": "https://claude.ai/new"
+  },
+  {
+   "id": "claude-recents",
+   "url": "https://claude.ai/recents"
+  },
+  {
+   "id": "substack-home",
+   "url": "https://substack.com/home"
+  },
+  {
+   "id": "youtube-home",
+   "url": "https://www.youtube.com/"
+  },
+  {
+   "id": "google-search",
+   "url": "https://www.google.com/search?q=liquid+glass+design"
+  },
+  {
+   "id": "spotify-home",
+   "url": "https://open.spotify.com/",
+   "act": "document.getElementById('onetrust-consent-sdk')?.remove()",
+   "modes": [
+    "dark"
+   ]
+  },
+  {
+   "id": "spotify-artist",
+   "url": "https://open.spotify.com/artist/4gzpq5DPGxSnKTe4SA8HAU",
+   "act": "document.getElementById('onetrust-consent-sdk')?.remove()",
+   "modes": [
+    "dark"
+   ]
+  }
+ ]
+}
