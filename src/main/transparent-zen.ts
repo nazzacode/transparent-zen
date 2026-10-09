@@ -24,6 +24,7 @@ class TransparentZen {
 		this.checkIfWebsiteAlreadySupported().then(contentScript => {
 			browser.storage.local.get("transparentZenSettings").then(async (settings) => {
 				this.transparentZenSettings = (settings as ExtensionSettings).transparentZenSettings;
+				this.siteGlass = contentScript ? contentScript.glass : undefined;
 				this.applyGlass(this.transparentZenSettings?.glassTheme, this.transparentZenSettings?.glassOpacity);
 				if (!contentScript) {
 					console.info("Website is not supported by Transparent Zen");
@@ -280,13 +281,14 @@ class TransparentZen {
 	// glass mode for site styles (styles/shared/glass.css): :root[data-tz-glass=dark|light] + --tz-glass-alpha, set early → no flash.
 	// "auto" (default) follows prefers-color-scheme, i.e. the desktop light/dark theme, live.
 	private glassTheme: "auto" | "dark" | "light" = "auto";
+	private siteGlass?: "dark" | "light"; // per-site override from data/ContentScripts.json
 	private static readonly lightScheme = window.matchMedia("(prefers-color-scheme: light)");
 
 	private applyGlass(theme?: "auto" | "dark" | "light", opacity?: number): void {
 		if (theme) this.glassTheme = theme;
 		const resolve = () => {
 			document.documentElement.dataset.tzGlass =
-				this.glassTheme === "auto" ? (TransparentZen.lightScheme.matches ? "light" : "dark") : this.glassTheme;
+				this.siteGlass ?? (this.glassTheme === "auto" ? (TransparentZen.lightScheme.matches ? "light" : "dark") : this.glassTheme);
 		};
 		resolve();
 		TransparentZen.lightScheme.onchange = resolve;

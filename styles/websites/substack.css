@@ -1,93 +1,54 @@
+@import url("../shared/glass.css");
+
 /* Substack: reader, posts (incl. custom domains), dashboard, editor. Styles by nazzacode.
-   Token trick: every Substack surface derives from a small palette
-   (--color-{light,dark}-{bg,fg}-* → rgb(var(--color-primitive-gray-N-rgb))).
-   Redefine the palette on every element (!important beats theme-wrapper redefinitions), then clear
-   the full-page wrappers so translucent layers don't stack.
-   Glass mode (popup): dark (default) = both palettes → dark glass + light text, even where
-   Substack has no dark mode (editor); light = Substack's light palette, translucent.
-   --tz-glass-alpha (popup slider) = page tint opacity. */
+   Token trick: every Substack surface derives from a small palette (--color-{light,dark}-{bg,fg}-*).
+   Both palettes → shared glass tokens (glass.css handles dark/light), redefined on every element (!important beats
+   theme-wrapper redefinitions); full-page wrappers cleared so translucent layers don't stack.
+   Substack is content-first (feeds, long posts) → the whole page sits on the content tier. */
 
 :root,
 :root * {
-	--tz-a1: var(--tz-glass-alpha, 0.45); /* page-level panels */
-	--tz-a2: calc(var(--tz-a1) + 0.15); /* cards, inputs, hovers */
-	--tz-dark-bg-1: rgba(var(--color-primitive-gray-900-rgb), var(--tz-a1));
-	--tz-dark-bg-2: rgba(var(--color-primitive-gray-850-rgb), var(--tz-a2));
-	--tz-dark-bg-3: rgba(var(--color-primitive-gray-800-rgb), var(--tz-a2));
-	--tz-dark-bg-4: rgba(var(--color-primitive-gray-700-rgb), var(--tz-a2));
-	--tz-dark-fg-1: rgb(var(--color-primitive-gray-200-rgb));
-	--tz-dark-fg-2: rgb(var(--color-primitive-gray-500-rgb));
-
-	/* dark palette (both modes) */
-	--color-dark-bg-primary: var(--tz-dark-bg-1) !important;
-	--color-dark-bg-primary-hover: var(--tz-dark-bg-2) !important;
-	--color-dark-bg-secondary: var(--tz-dark-bg-3) !important;
-	--color-dark-bg-tertiary: var(--tz-dark-bg-4) !important;
-	--color-dark-bg-quaternary: rgba(var(--color-primitive-gray-600-rgb), var(--tz-a2)) !important;
-	--color-dark-bg-sunken-primary: rgba(var(--color-primitive-gray-950-rgb), var(--tz-a1)) !important;
-
-	/* light palette → dark glass (default mode) */
-	--color-light-bg-primary: var(--tz-dark-bg-1) !important;
-	--color-light-bg-primary-hover: var(--tz-dark-bg-2) !important;
-	--color-light-bg-secondary: var(--tz-dark-bg-3) !important;
-	--color-light-bg-tertiary: var(--tz-dark-bg-4) !important;
-	--color-light-bg-quaternary: rgba(var(--color-primitive-gray-600-rgb), var(--tz-a2)) !important;
-	--color-light-fg-primary: var(--tz-dark-fg-1) !important;
-	--color-light-fg-secondary: var(--tz-dark-fg-2) !important;
-	--color-light-fg-tertiary: rgb(var(--color-primitive-gray-600-rgb)) !important;
-	--color-light-utility-detail: rgba(255, 255, 255, 0.1) !important;
-	--print_on_web_bg_color: var(--tz-dark-fg-1) !important;
-	--print_secondary_on_web_bg_color: var(--tz-dark-fg-2) !important;
-
-	--color-bg-elevated-primary: var(--color-bg-primary-hover) !important;
+	--color-dark-bg-primary: transparent !important;
+	--color-light-bg-primary: transparent !important;
+	--color-dark-bg-primary-hover: var(--g-fill-hover) !important;
+	--color-light-bg-primary-hover: var(--g-fill-hover) !important;
+	--color-dark-bg-secondary: var(--g-fill) !important;
+	--color-light-bg-secondary: var(--g-fill) !important;
+	--color-dark-bg-tertiary: var(--g-fill-hover) !important;
+	--color-light-bg-tertiary: var(--g-fill-hover) !important;
+	--color-dark-bg-quaternary: var(--g-fill-selected) !important;
+	--color-light-bg-quaternary: var(--g-fill-selected) !important;
+	--color-dark-bg-sunken-primary: var(--g-fill) !important;
+	--color-bg-elevated-primary: var(--g-popover) !important;
+	--color-dark-fg-primary: var(--g-fg) !important;
+	--color-light-fg-primary: var(--g-fg) !important;
+	--color-dark-fg-secondary: var(--g-fg-2) !important;
+	--color-light-fg-secondary: var(--g-fg-2) !important;
+	--color-dark-fg-tertiary: var(--g-fg-3) !important;
+	--color-light-fg-tertiary: var(--g-fg-3) !important;
+	--color-dark-utility-detail: var(--g-line) !important;
+	--color-light-utility-detail: var(--g-line) !important;
+	--print_on_web_bg_color: var(--g-fg) !important;
+	--print_secondary_on_web_bg_color: var(--g-fg-2) !important;
 	--web_bg_color: transparent !important;
 }
 
-/* light mode: Substack's own light palette, translucent */
-:root[data-tz-glass="light"],
-:root[data-tz-glass="light"] * {
-	--color-light-bg-primary: rgba(var(--color-primitive-gray-100-rgb), var(--tz-a1)) !important;
-	--color-light-bg-primary-hover: rgba(var(--color-primitive-gray-150-rgb), var(--tz-a2)) !important;
-	--color-light-bg-secondary: rgba(var(--color-primitive-gray-200-rgb), var(--tz-a2)) !important;
-	--color-light-bg-tertiary: rgba(var(--color-primitive-gray-300-rgb), var(--tz-a2)) !important;
-	--color-light-bg-quaternary: rgba(var(--color-primitive-gray-400-rgb), var(--tz-a2)) !important;
-	--color-light-fg-primary: rgb(var(--color-primitive-gray-700-rgb)) !important;
-	--color-light-fg-secondary: rgb(var(--color-primitive-gray-500-rgb)) !important;
-	--color-light-fg-tertiary: rgb(var(--color-primitive-gray-400-rgb)) !important;
-	--color-light-utility-detail: rgba(0, 0, 0, 0.1) !important;
-	--print_on_web_bg_color: rgb(var(--color-primitive-gray-700-rgb)) !important;
-	--print_secondary_on_web_bg_color: rgb(var(--color-primitive-gray-500-rgb)) !important;
+/* content-first: one content-tier tint for the whole page */
+:root.tz-initialized body {
+	background: var(--g-content-abs) !important;
 }
 
-/* one tint for the whole page; html stays clear for Zen's glass */
-html {
-	background: transparent !important;
-}
-body {
-	background: var(--color-bg-primary, var(--tz-dark-bg-1)) !important;
-}
-
-/* editor: no dark mode of its own → dark glass + light text by default; light mode = denser white glass */
-:root:has(.editor-scroll) body {
-	background: var(--tz-dark-bg-1) !important;
-}
+/* editor (no dark mode of its own): text follows the glass foreground */
 .newsletter-post-editor :is(.ProseMirror, .post-title, .subtitle, textarea, [contenteditable]) {
-	color: var(--color-light-fg-primary) !important;
-	caret-color: var(--color-light-fg-primary);
-}
-:root[data-tz-glass="light"]:has(.editor-scroll) body {
-	background: rgba(255, 255, 255, calc(var(--tz-a1) + 0.17)) !important;
+	color: var(--g-fg) !important;
+	caret-color: var(--g-fg);
 }
 
 /* editor's fixed bottom bar (history/info/settings): text scrolls under it → frost it */
 .newsletter-post-editor > :is([class^="footer-"], [class*=" footer-"]) {
-	background: rgba(28, 28, 30, 0.55) !important;
-	backdrop-filter: blur(24px) saturate(1.4);
-	border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-:root[data-tz-glass="light"] .newsletter-post-editor > :is([class^="footer-"], [class*=" footer-"]) {
-	background: rgba(255, 255, 255, 0.55) !important;
-	border-top-color: rgba(0, 0, 0, 0.06);
+	background: var(--g-popover) !important;
+	backdrop-filter: var(--g-blur);
+	border-top: 1px solid var(--g-line);
 }
 
 /* full-page wrappers that would stack a second translucent layer */
@@ -109,5 +70,5 @@ body {
 
 /* floating surfaces: denser + frosted so text under them doesn't bleed through */
 :is([role="dialog"], [role="menu"], [role="listbox"], [data-radix-popper-content-wrapper] > *, [class*="popover"], [class*="dropdown"], [class*="modal"]) {
-	backdrop-filter: blur(20px) saturate(1.4);
+	backdrop-filter: var(--g-blur);
 }

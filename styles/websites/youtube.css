@@ -1,194 +1,63 @@
-@import url("../shared/base.css");
+@import url("../shared/glass.css");
 
-:root {
-  --main-background: transparent !important;
-  --yt-spec-base-background: transparent !important;
-  --yt-sys-color-baseline--base-background: transparent !important;
-  --second-background: transparent !important;
-}
-
-html,
-html[dark] {
-  background: transparent !important;
-}
+/* YouTube. Styles by nazzacode (replaces upstream). Media-first (Apple Music pattern): frame glass, thumbnails float on it.
+   glasslab: colours now come from hashed build tokens (--t3e41…) → unstable → token-less strategy:
+   tint the app shell, neutralise fills, re-tier controls, text from the shared palette. */
 
 ytd-app {
-  background: none !important;
+	background: var(--g-frame) !important;
+}
+ytd-app :where(:not(img, video, canvas, yt-image, yt-img-shadow, button, [style*="background"], .ytSpecTouchFeedbackShapeFill,
+		ytd-thumbnail, ytd-thumbnail *, yt-thumbnail-view-model, yt-thumbnail-view-model *, .ytp-chrome-bottom *,
+		#scrim, tp-yt-paper-progress *, .yt-badge-shape, [class*="ytBadgeShape"], [class*="Badge"], .ytp-progress-bar *)) {
+	background-color: transparent !important;
+}
+tp-yt-app-drawer #scrim {
+	background: transparent !important; /* persistent guide sits under it at desktop widths */
+}
+:is(tp-yt-iron-dropdown, ytd-menu-popup-renderer, ytd-multi-page-menu-renderer, tp-yt-paper-dialog, [role="dialog"], [role="listbox"]) {
+	background-color: var(--g-popover) !important;
+	backdrop-filter: var(--g-blur);
+	box-shadow: var(--g-shadow) !important;
+}
+/* controls: chips, search, guide selection */
+:is(yt-chip-cloud-chip-renderer, .ytChipShapeChip):not([selected], [aria-selected="true"], .ytChipShapeActive) {
+	background-color: var(--g-fill) !important;
+}
+:is(.ytSearchboxComponentInputBox, .ytSearchboxComponentSearchButton, #container.ytd-searchbox) {
+	background-color: var(--g-fill) !important;
+	border-color: var(--g-line) !important;
+}
+/* selected chip = inverted capsule */
+:is(yt-chip-cloud-chip-renderer[selected], .ytChipShapeActive) {
+	background-color: var(--g-fg) !important;
+	color: rgb(var(--g-rgb)) !important;
+}
+:is(yt-chip-cloud-chip-renderer[selected], .ytChipShapeActive) * {
+	color: rgb(var(--g-rgb)) !important;
+}
+ytd-guide-entry-renderer[active] tp-yt-paper-item,
+ytd-guide-entry-renderer[active] a {
+	background-color: var(--g-fill-selected) !important;
 }
 
-#frosted-glass {
-  display: none !important;
+/* text */
+ytd-app :where(:not([style*="color"], .yt-badge-shape *, [class*="Badge"] *, yt-chip-cloud-chip-renderer[selected] *,
+		.ytChipShapeActive, .ytChipShapeActive *, .ytp-chrome-bottom *)) {
+	color: var(--g-fg) !important;
 }
-
-#background.ytd-masthead {
-  display: block !important;
-  background: none !important;
+:is(#metadata-line, #metadata-line *, #byline-container, #byline-container *, .ytContentMetadataViewModelMetadataText,
+	.inline-metadata-item, ytd-channel-name, ytd-channel-name *, [class*="AdDetailsLine"], [class*="MetadataText"]) {
+	color: var(--g-fg-2) !important;
 }
-
-#voice-search-button {
-  background-color: var(--transparent-background-darker) !important;
+:is(.ytSearchboxComponentInputBox input, .ytSearchboxComponentInputBox) {
+	color: var(--g-fg) !important;
 }
-
-#masthead {
-  #end {
-    #buttons {
-      background: var(--transparent-background-dark);
-      backdrop-filter: var(--backdrop-blur);
-      border-radius: 16px;
-
-      > ytd-button-renderer {
-        button {
-          background: none !important;
-          backdrop-filter: none !important;
-        }
-      }
-    }
-  }
+:root:not([data-tz-glass="light"]) :is(yt-icon, .yt-icon-shape) {
+	color: var(--g-fg) !important;
+	fill: currentColor;
 }
-
-#home-chips,
-#chips,
-#chips-wrapper.ytd-feed-filter-chip-bar-renderer {
-  position: relative;
-  top: 0;
-
-  yt-chip-cloud-chip-renderer[chip-style="STYLE_DEFAULT"][selected],
-  yt-chip-cloud-chip-renderer[chip-style="STYLE_HOME_FILTER"][selected] {
-    background: none !important;
-
-    #chip-container.yt-chip-cloud-chip-renderer {
-      background: var(--color-bg) !important;
-      color: var(--color-text) !important;
-      outline: 1px solid var(--color-primary);
-      outline-offset: -1px;
-    }
-  }
-}
-
-a#thumbnail {
-  background: var(--transparent-background) !important;
-}
-
-#efyt-background {
-  background: var(--color-bg) !important;
-}
-
-.ytSearchboxComponentInputBox {
-  background: var(--color-bg) !important;
-}
-
-.ytSearchboxComponentSearchButton {
-  background: black !important;
-
-  &:hover {
-    background: var(--color-primary) !important;
-  }
-}
-
-.ytSearchboxComponentSuggestionsContainer {
-  background: var(--color-bg) !important;
-  top: 48px;
-  border-radius: 0;
-  border-bottom-left-radius: var(--border-radius);
-  border-bottom-right-radius: var(--border-radius);
-
-  .ytSuggestionComponentSuggestion:hover {
-    background: var(--transparent-primary) !important;
-    cursor: pointer;
-
-    .ytSuggestionComponentText {
-      cursor: pointer;
-    }
-  }
-}
-
-.ytp-popup.ytp-contextmenu,
-.ytd-popup-container {
-  background-color: var(--transparent-background-dark) !important;
-  backdrop-filter: var(--backdrop-blur);
-  border-radius: var(--border-radius);
-
-  .ytp-menuitem,
-  .ytd-menu-service-item-renderer {
-    &:hover {
-      background-color: var(--color-bg) !important;
-    }
-  }
-
-  ytd-menu-service-item-renderer:hover {
-    background: none !important;
-  }
-}
-
-/* Youtube Player (incl. embeds) */
-#player,
-#player-container {
-  #cinematics.ytd-watch-flexy {
-    /* Disable ambient mode */
-    display: none !important;
-  }
-
-  .ytp-popup,
-  .ytp-tooltip {
-    background-color: var(--transparent-background-darker) !important;
-    backdrop-filter: var(--backdrop-blur);
-    border-radius: var(--border-radius);
-  }
-
-  .ytp-title-channel {
-    &.ytp-title-expanded {
-      background-color: var(--transparent-background-darker) !important;
-      backdrop-filter: var(--backdrop-blur);
-      border-radius: 25px;
-    }
-  }
-
-  .ytp-title-link {
-    color: var(--color-white) !important;
-  }
-
-  .ytp-progress-bar-container {
-    .ytp-progress-list {
-      background-color: rgb(from var(--color-white) r g b / 0.25) !important;
-
-      .ytp-play-progress {
-        background: var(--color-primary) !important;
-      }
-
-      .ytp-load-progress,
-      .ytp-hover-progress {
-        background-color: rgb(from var(--color-white) r g b / 0.5) !important;
-      }
-    }
-
-    .ytp-scrubber-button {
-      background-color: var(--color-primary) !important;
-    }
-  }
-
-  .ytp-volume-area {
-    .ytp-volume-slider-handle {
-      background-color: var(--color-white) !important;
-
-      &::before {
-        background-color: var(--color-white) !important;
-      }
-
-      &::after {
-        background-color: rgb(from var(--color-white) r g b / 0.25) !important;
-      }
-    }
-  }
-
-  .ytp-settings-button.ytp-hd-quality-badge,
-  .ytp-settings-button.ytp-hdr-quality-badge,
-  .ytp-settings-button.ytp-4k-quality-badge,
-  .ytp-settings-button.ytp-5k-quality-badge,
-  .ytp-settings-button.ytp-8k-quality-badge,
-  .ytp-settings-button.ytp-3d-badge-grey,
-  .ytp-settings-button.ytp-3d-badge {
-    &::after {
-      background-color: var(--color-red) !important;
-    }
-  }
+:root[data-tz-glass="light"] :is(yt-icon, .yt-icon-shape) {
+	color: var(--g-fg) !important;
+	fill: currentColor;
 }

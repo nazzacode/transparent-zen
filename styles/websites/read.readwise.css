@@ -1,0 +1,97 @@
+@import url("../shared/glass.css");
+
+/* Readwise Reader. Styles by nazzacode. Semantic tokens (glasslab discovery) → shared glass tiers.
+   sidebars/canvas = frame · library list + reader pane = content · cards/inputs = fills · menus/modals = popover. */
+
+:root,
+:root * {
+	/* surfaces */
+	--background-canvas: transparent !important;
+	--sidebar-background: transparent !important;
+	--empty-sidebar-background: transparent !important;
+	--inbox-sidebar-background: transparent !important;
+	--background-color: var(--g-content) !important;
+	--content-background-color: var(--g-content) !important;
+	--background-primary: var(--g-content) !important;
+	--metadata-input-focus-background: var(--g-content) !important;
+	--background-secondary: var(--g-fill) !important;
+	--document-card-background: var(--g-fill) !important;
+	--link-card-background: var(--g-fill) !important;
+	--metadata-input-background: var(--g-fill) !important;
+	--search-input-background: var(--g-fill) !important;
+	--document-search-input-background: var(--g-fill) !important;
+	--tag-background: var(--g-fill) !important;
+	--background-tertiary: var(--g-fill-hover) !important;
+	--document-card-background--hover: var(--g-fill-hover) !important;
+	--background-elevated: var(--g-popover) !important;
+	--popover-background: var(--g-popover) !important;
+	--sort-menu-background: var(--g-popover) !important;
+	--appearance-panel-background: var(--g-popover) !important;
+	--sidebar-inbox-nav-background: var(--g-popover) !important;
+	--wisereads-modal-background: var(--g-popover) !important;
+	--wisereads-modal-card-background: var(--g-fill) !important;
+	--background-backdrop: var(--g-scrim) !important;
+	--background-button-secondary: var(--g-fill) !important;
+	--background-button-secondary-hover: var(--g-fill-hover) !important;
+	--background-button-secondary-active: var(--g-fill-selected) !important;
+	--btn-secondary: var(--g-fill) !important;
+	--appearance-panel-item-hover-background: var(--g-fill-hover) !important;
+	--inbox-header-tab-count-background: var(--g-fill) !important;
+
+	/* text, icons, lines */
+	--text: var(--g-fg) !important;
+	--text-primary: var(--g-fg) !important;
+	--text-grey-darker: var(--g-fg) !important;
+	--text-grey-dark: var(--g-fg) !important;
+	--text-grey-lighter: var(--g-fg) !important;
+	--reading-text-primary: var(--g-fg) !important; /* article body (causal: drives p colour) */
+	--reading-text-secondary: var(--g-fg-2) !important;
+	--reading-text-tertiary: var(--g-fg-3) !important;
+	--summary-text: var(--g-fg) !important;
+	--default-button-text-color: var(--g-fg) !important;
+	--text-button-primary: var(--g-fg) !important;
+	--text-button-secondary: var(--g-fg) !important;
+	--primary-button-color: var(--g-fg) !important;
+	--inbox-header-active-tab-text-color: var(--g-fg) !important;
+	--inbox-header-tab-active-count-text-color: var(--g-fg) !important;
+	--text-secondary: var(--g-fg-2) !important;
+	--text-grey: var(--g-fg-2) !important;
+	--text-grey-medium: var(--g-fg-2) !important;
+	--text-grey-lightish: var(--g-fg-2) !important;
+	--content-secondary-color: var(--g-fg-2) !important;
+	--document-list-item-tertiary-text-color: var(--g-fg-2) !important;
+	--tag-text-color: var(--g-fg-2) !important;
+	--inbox-header-tab-text-color: var(--g-fg-2) !important;
+	--inbox-header-tab-count-text-color: var(--g-fg-2) !important;
+	--text-tertiary: var(--g-fg-3) !important;
+	--text-placeholder: var(--g-fg-3) !important;
+	--icon-primary: var(--g-fg) !important;
+	--icon-secondary: var(--g-fg-2) !important;
+	--icon-tertiary: var(--g-fg-3) !important;
+	--border-secondary: var(--g-line) !important;
+	--border-secondary-alpha: var(--g-line) !important;
+	--border-tertiary-alpha: var(--g-line) !important;
+	--section-border-color: var(--g-line) !important;
+	--link-card-border: var(--g-line) !important;
+	--text-interactive: var(--g-blue) !important;
+	--text-error: var(--g-red) !important;
+	--text-success: var(--g-green) !important;
+}
+
+/* hard-coded (no token drives it) */
+#inbox-sidebar {
+	background-color: transparent !important;
+}
+
+/* side panels carry long text (document info, TOC, notebook) → content tier, as Apple densifies large text sidebars */
+#right-sidebar,
+:is(aside)[class*="_aside_"] {
+	background-color: var(--g-content) !important;
+}
+/* list hover bar + doc nav buttons paint fixed greys */
+[class*="_hoverBar_"] {
+	background-color: var(--g-fill-hover) !important;
+}
+:is([class*="_backButton_"], [class*="_navigationButtons_"]) {
+	background-color: var(--g-fill) !important;
+}

@@ -8,8 +8,8 @@
 
    tier      role (Apple)                                   alpha (s = slider)
    window    page backdrop, gaps between panes              s
-   chrome    sidebars, top bars, nav rails (glass layer)    clamp(.45, s+.10, .92)   light floor .75
-   content   lists, reading panes, grids (content layer)    clamp(.76, s+.25, .96)   light floor .88
+   chrome    sidebars, top bars, nav rails (glass layer)    clamp(.50, s+.10, .92)   light floor .75
+   content   lists, reading panes, grids (content layer)    clamp(.78, s+.25, .96)   light floor .88
    popover   menus, dialogs, tooltips ("thicker" glass)     clamp(.85, s+.35, .96)   light floor .88  + blur
    rows / controls: fixed overlay fills (no slider); text: solid colours only, never low-alpha text on glass.
 
@@ -30,20 +30,21 @@
 	--g-a-content-on: max(0, calc((var(--g-a-content) - var(--g-a-chrome)) / (1 - var(--g-a-chrome))));
 
 	/* dark (default) */
-	--g-floor-chrome: 0.45;
-	--g-floor-content: 0.76; /* Apple keeps content near-solid; .76 = long secondary text readable over p95 wallpaper (glasslab) */
+	--g-floor-chrome: 0.5; /* labels on thin glass stay Lc60 at slider 10% over bright wallpaper */
+	--g-floor-content: 0.78; /* Apple keeps content near-solid; .78 = long secondary text readable over p95 wallpaper (glasslab) */
 	--g-floor-popover: 0.85;
 	--g-rgb: 22, 22, 26; /* base tint: neutral, faintly cool (DMS Apple greys) */
 	--g-rgb-raised: 38, 38, 44; /* popovers, cards */
 	--g-fg: #f2f2f5;
-	--g-fg-2: #dadade; /* secondary: bright enough for 11px labels at the content floor (APCA Lc60 over p95 wallpaper) */
+	--g-fg-2: #dfdfe3; /* secondary: bright enough for 11px labels at the content floor (APCA Lc60 over p95 wallpaper) */
 	--g-fg-3: #a8a8b0;
 	--g-accent: #0a84ff; /* DMS nathanos-theme dark primary */
 	/* status text (Apple accessible system colours: readable as small text on glass) */
 	--g-red: #ff9e98; /* lighter than Apple's #ff6961: 14px status text over bright wallpaper (glasslab) */
 	--g-orange: #ffc266;
 	--g-green: #5fe07f;
-	--g-blue: #6cb4ff;
+	--g-blue: #9ccbff; /* link/title text: light enough for Lc60 over bright wallpaper */
+	--g-purple: #c9a2ff; /* visited links */
 	--g-on-accent: #fff;
 	--g-line: rgba(255, 255, 255, 0.1);
 	--g-line-strong: rgba(255, 255, 255, 0.16);
@@ -76,16 +77,17 @@
 	--g-rgb-raised: 255, 255, 255;
 	--g-fg: #1c1c1e;
 	--g-fg-2: #333338;
-	--g-fg-3: #5a5a62;
+	--g-fg-3: #55555c;
 	--g-accent: #007aff; /* DMS nathanos-theme light primary */
 	--g-red: #b5000f;
 	--g-orange: #a32a00;
 	--g-green: #1d7032;
 	--g-blue: #0035b8;
+	--g-purple: #5b23a8;
 	--g-line: rgba(0, 0, 0, 0.08);
 	--g-line-strong: rgba(0, 0, 0, 0.14);
-	--g-fill: rgba(0, 0, 0, 0.04);
-	--g-fill-hover: rgba(0, 0, 0, 0.06);
+	--g-fill: rgba(255, 255, 255, 0.55); /* light glass controls = white frost (Apple), never a dark smudge */
+	--g-fill-hover: rgba(255, 255, 255, 0.72);
 	--g-fill-selected: rgba(0, 122, 255, 0.1);
 	--g-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 	--g-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);

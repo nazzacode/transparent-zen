@@ -1,35 +1,40 @@
-/* Spotify web player. Styles by nazzacode.
-   Encore tokens (--background-*) drive every surface; classes are hashed → tokens + ids/data-testid only.
-   Dark-only app: both glass modes stay dark (light mode = denser tint so white text holds). */
+@import url("../shared/glass.css");
 
-:root,
-.encore-dark-theme { /* scope only: nested encore-inverted(-light)-set keep their own tokens (white buttons) */
-	--tz-a1: var(--tz-glass-alpha, 0.45);
-	--tz-a3: calc(var(--tz-a1) + 0.4); /* menus, dialogs */
-	--background-base: rgba(18, 18, 18, calc(var(--tz-a1) - 0.15)) !important; /* panels */
-	--background-highlight: rgba(255, 255, 255, 0.07) !important;
-	--background-press: rgba(0, 0, 0, 0.3) !important;
-	--background-elevated-base: rgba(31, 31, 31, calc(var(--tz-a1) + 0.1)) !important; /* cards, inputs */
-	--background-elevated-highlight: rgba(42, 42, 42, calc(var(--tz-a1) + 0.2)) !important;
-	--background-elevated-press: rgba(25, 25, 25, calc(var(--tz-a1) + 0.2)) !important;
-}
-:root[data-tz-glass="light"],
-:root[data-tz-glass="light"] .encore-dark-theme {
-	--tz-a1: calc(var(--tz-glass-alpha, 0.45) + 0.2);
+/* Spotify web player. Styles by nazzacode. Encore tokens → shared glass tiers (Apple Music pattern):
+   app shell = frame · library panel = frame (clear) · main view = content · cards/menus = popover/fills.
+   Scope = everything under .encore-dark-theme EXCEPT nested encore-inverted(-light)/bright-accent sets (white buttons).
+   Spotify is dark-only; text tokens follow glass.css, so light glass gets dark text. Classes are hashed → ids/testids. */
+
+/* every element except inside Spotify's special nested sets (white buttons, accent buttons keep theirs) */
+.encore-dark-theme,
+.encore-dark-theme :not(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set,
+	:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, [data-encore-id^="button"]) *) {
+	--background-base: var(--g-content) !important;
+	--background-highlight: var(--g-fill-hover) !important;
+	--background-press: var(--g-fill-selected) !important;
+	--background-elevated-base: var(--g-popover) !important;
+	--background-elevated-highlight: var(--g-fill-hover) !important;
+	--background-elevated-press: var(--g-fill-selected) !important;
+	--background-tinted-base: var(--g-fill) !important;
+	--background-tinted-highlight: var(--g-fill-hover) !important;
+	--background-tinted-press: var(--g-fill-selected) !important;
+	--text-base: var(--g-fg) !important;
+	--text-subdued: var(--g-fg-2) !important;
+	--essential-base: var(--g-fg) !important;
+	--essential-subdued: var(--g-fg-3) !important;
+	--decorative-subdued: var(--g-line) !important;
+	--text-announcement: var(--g-blue) !important;
+	--text-negative: var(--g-red) !important;
+	--text-warning: var(--g-orange) !important;
 }
 
-/* one tint for the whole page; html stays clear for Zen's glass */
-html {
+/* shell: hard #000 behind the panels → frame shows through */
+:is(#global-nav-bar, [data-testid="root"] > div, [data-testid="root"] > div > div, #Desktop_LeftSidebar_Id) { /* incl. now-playing bar */
 	background: transparent !important;
 }
-body,
-#global-nav-bar,
-[data-testid="root"] > div, /* app shell: hard #000 behind the panels */
-#Desktop_LeftSidebar_Id {
+/* library panel = glass sidebar (no content tint) */
+#Desktop_LeftSidebar_Id :is(nav, [class*="YourLibrary"]) {
 	background: transparent !important;
-}
-body {
-	background: rgba(0, 0, 0, var(--tz-a1)) !important;
 }
 
 /* per-page colour band behind the header (inline background-color) → soft wash fading into the glass */
@@ -38,12 +43,23 @@ body {
 	mask-image: linear-gradient(black, transparent);
 }
 
-/* menus / context menus / dialogs over glass */
+/* menus / context menus / dialogs over glass (cookie banner excluded) */
 :is([role="menu"], [role="dialog"], [data-testid="context-menu"]):not(#onetrust-banner-sdk, #onetrust-pc-sdk) {
-	background-color: rgba(31, 31, 31, var(--tz-a3)) !important;
-	backdrop-filter: var(--backdrop-blur, blur(20px));
+	background-color: var(--g-popover) !important;
+	backdrop-filter: var(--g-blur);
 }
 
-:root * {
-	scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+/* plain text without Encore's text attribute (card titles, links) → primary (zero specificity: role rules below win) */
+.encore-dark-theme :where(#main-view, #Desktop_LeftSidebar_Id) :where(a, span, p, h1, h2, h3):where(:not(:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, button, [data-encore-id^="button"]) *)) {
+	color: var(--g-fg) !important;
+}
+/* text: colours live in hashed classes (no token drives them, glasslab causal test) → semantic Encore typography classes
+   (stable, unhashed) carry the role: metadata sizes = secondary, everything else = primary. Special sets keep theirs. */
+.encore-dark-theme [data-encore-id="text"]:not(:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, [data-encore-id^="button"]) *),
+.encore-dark-theme [data-encore-id="text"]:not(:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, [data-encore-id^="button"]) *) a {
+	color: var(--g-fg) !important;
+}
+.encore-dark-theme :is(.encore-text-body-small, .encore-text-marginal, .encore-text-marginal-bold):not(:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, [data-encore-id^="button"]) *),
+.encore-dark-theme :is(.encore-text-body-small, .encore-text-marginal, .encore-text-marginal-bold):not(:is(.encore-inverted-set, .encore-inverted-light-set, .encore-bright-accent-set, [data-encore-id^="button"]) *) a {
+	color: var(--g-fg-2) !important;
 }

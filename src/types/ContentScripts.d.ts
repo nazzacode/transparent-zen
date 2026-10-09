@@ -9,4 +9,5 @@ export type SupportedWebsite = {
 	css?: Array<string>;
 	run_at?: "document_start" | "document_end" | "document_idle";
 	favicon?: string;
+	glass?: "dark" | "light"; // force a glass mode for this site (e.g. dark-only apps), overrides the popup/auto setting
 };

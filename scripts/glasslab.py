@@ -43,6 +43,11 @@ SCREENS = [
     {"id": "substack-home", "url": "https://substack.com/home"},
     {"id": "youtube-home", "url": "https://www.youtube.com/"},
     {"id": "google-search", "url": "https://www.google.com/search?q=liquid+glass+design"},
+    # Spotify: ContentScripts "glass": "dark" (dark-only app) → tested dark only
+    {"id": "spotify-home", "url": "https://open.spotify.com/", "act": "document.getElementById('onetrust-consent-sdk')?.remove()",
+     "modes": ["dark"]},
+    {"id": "spotify-artist", "url": "https://open.spotify.com/artist/4gzpq5DPGxSnKTe4SA8HAU",
+     "act": "document.getElementById('onetrust-consent-sdk')?.remove()", "modes": ["dark"]},
 ]
 
 PROBE = r"""
@@ -85,12 +90,18 @@ PROBE = r"""
     if (i < 0) continue;
     let img = false, chip = false; const layers = [];
     for (let k = stack.length - 1; k >= i; k--) { if (stack[k] === document.documentElement) continue; const s = getComputedStyle(stack[k]);
-      if (s.backgroundImage !== 'none' && !s.backgroundImage.includes('gradient')) img = true;
+      if (s.backgroundImage !== 'none') img = true;  // image or gradient behind text: colour unknowable → exempt
       const c = P(s.backgroundColor); if (c[3] > 0) layers.push(c);
-      if (c[3] >= .85 && (stack[k].getAttribute('style') || '').includes('background-color')) chip = true; }  // site-coloured chip
+      // pseudo-element fills paint above their element's own background (pill buttons, cards drawn with ::before)
+      for (const pe of ['::before', '::after']) { const ps = getComputedStyle(stack[k], pe);
+        if (ps.content !== 'none' && ps.position === 'absolute') { const pc = P(ps.backgroundColor); if (pc[3] > 0) layers.push(pc); } }
+      if (c[3] >= .85 && (stack[k].getAttribute('style') || '').includes('background-color')) chip = true;  // site-coloured chip
+      if (c[3] >= .85 && Math.max(c[0], c[1], c[2]) - Math.min(c[0], c[1], c[2]) > 60) chip = true; }  // saturated fill = accent control
     const fg = P(cs.color), px = parseFloat(cs.fontSize), bold = +cs.fontWeight >= 600;
     // APCA floors: <16px body Lc75 (short labels ≤20 chars = non-body Lc60), <24px Lc60, larger Lc45; bold eases one step
-    const tier = (px < 16 ? (t.length <= 20 ? 1 : 0) : px < 24 ? 1 : 2) + (bold ? 1 : 0), need = [75, 60, 45, 45][Math.min(tier, 3)];
+    // control labels (buttons/tabs/menu items/options) are labels whatever their length
+    const label = t.length <= 20 || !!el.closest('button, [role=button], [role=tab], [role=option], [role=menuitem], [role=link] [role=text]');
+    const tier = (px < 16 ? (label ? 1 : 0) : px < 24 ? 1 : 2) + (bold ? 1 : 0), need = [75, 60, 45, 45][Math.min(tier, 3)];
     const res = bounds.map(bd => { let bg = over(tint, bd); for (const l of layers) bg = over(l, bg); return apca(over(fg, bg), bg); });
     runs.push({ sel: sel(el), t: t.slice(0, 40), n: Math.min(t.length, 200), px: Math.round(px), need, img,
       cr: res.map(v => Math.round(v)), fg: cs.color, chip });
@@ -184,11 +195,15 @@ def neutral_text_conformance(runs, fgs, tol=10):
     def rgb(c):
         m = re.findall(r"[\d.]+", c); return [float(x) for x in m[:3]] if len(m) >= 3 else None
     ok = tot = 0
+    foreign = {}
     for r in runs:
         c = rgb(r["fg"])
         if not c or max(c) - min(c) > 24: continue  # chromatic → accent/status
         tot += r["n"]
         if any(f and all(abs(c[i] - f[i]) <= tol for i in range(3)) for f in fgs): ok += r["n"]
+        else:
+            k = f"{r['fg']} {r['sel']}"; foreign[k] = foreign.get(k, 0) + r["n"]
+    neutral_text_conformance.foreign = sorted(foreign.items(), key=lambda x: -x[1])[:6]
     return ok / tot if tot else 1.0
 
 
@@ -240,7 +255,7 @@ async def run(screens, out):
             await b.eval(ctx, f"({PROBE})({json.dumps(BOUNDS)},[0,0,0,0])") or "[]")}
         await b.eval(ctx, "window.__tz.forEach(l=>document.head.append(l));document.documentElement.classList.add('tz-initialized')")
         await asyncio.sleep(0.8)
-        for mode in MODES:
+        for mode in sc.get("modes", MODES):
             for a in ALPHAS:
                 await b.eval(ctx, f"document.documentElement.dataset.tzGlass='{mode}';"
                                   f"document.documentElement.style.setProperty('--tz-glass-alpha','{a}')")
@@ -250,7 +265,8 @@ async def run(screens, out):
                 blk.save(f"{out}/raw/{key}.black.png"); wht.save(f"{out}/raw/{key}.white.png")
                 await b.eval(ctx, "document.documentElement.style.removeProperty('background')")
                 runs = json.loads(await b.eval(ctx, f"({PROBE})({json.dumps(BOUNDS)},{json.dumps(list(ZEN_TINT[mode]))})") or "[]")
-                chips = [r for r in runs if r.get("chip")]; runs = [r for r in runs if not r.get("chip")]
+                # exempt: text on site-coloured chips and on images (colour unknowable from CSS) — reported, not scored
+                chips = [r for r in runs if r.get("chip") or r.get("img")]; runs = [r for r in runs if not (r.get("chip") or r.get("img"))]
                 # target per run: its APCA floor, relaxed to the site's own native contrast (−10%) where the native
                 # design is already below the floor → glass must never read worse than the original site
                 for r in runs:
@@ -259,6 +275,7 @@ async def run(screens, out):
                     r["target"] = r["need"] if nv is None else min(r["need"], nv * 0.9)
                 uni = json.loads(await b.eval(ctx, UNITY) or "{}")
                 uni["text"] = neutral_text_conformance(runs, uni.get("fgs", []))
+                uni["text_foreign"] = neutral_text_conformance.foreign
                 tot = sum(r["n"] for r in runs) or 1
                 ok = [sum(r["n"] for r in runs if r["cr"][k] >= r["target"]) / tot for k in range(len(BOUNDS))]
                 worst = sorted(runs, key=lambda r: min(r["cr"]) / max(r["target"], 1))[:8]
@@ -269,7 +286,7 @@ async def run(screens, out):
                         g["chars"] += r["n"]
                 failing = sorted(agg.values(), key=lambda g: -g["chars"])[:10]
                 results.append({"key": key, "screen": sc["id"], "mode": mode, "alpha": a, "url": sc["url"],
-                                "texts": len(runs), "chips": len(chips), "unity": uni, "pass": [round(v, 3) for v in ok], "worst": worst, "failing": failing})
+                                "texts": len(runs), "chips": len(chips), "unity": uni, "exempt": sc.get("exempt", {}), "pass": [round(v, 3) for v in ok], "worst": worst, "failing": failing})
                 print(f"{key:28s} texts {len(runs):3d}  contrast(black,bright) {ok[0]:4.0%} {ok[1]:4.0%}  "
                       f"unity surface {uni.get('surface', 0):4.0%} text {uni['text']:4.0%}", flush=True)
     await ws.close()
@@ -280,14 +297,15 @@ def sheets(results, out):
     walls = {w: Image.open(f"{WALL_DIR}/blur-{w}.png") for w in WALLS if os.path.exists(f"{WALL_DIR}/blur-{w}.png")}
     for scr in dict.fromkeys(r["screen"] for r in results):
         tiles = []  # row per mode, col per alpha, on the first wallpaper; then a row of all walls at default alpha (dark)
-        for mode in MODES:
+        modes = [m for m in MODES if os.path.exists(f"{out}/raw/{scr}.{m}.{int(ALPHAS[0]*100)}.black.png")]
+        for mode in modes:
             row = []
             for a in ALPHAS:
                 key = f"{scr}.{mode}.{int(a*100)}"
                 blk, wht = Image.open(f"{out}/raw/{key}.black.png"), Image.open(f"{out}/raw/{key}.white.png")
                 img, _ = composite(blk, wht, walls[WALLS[0]], ZEN_TINT[mode]); img.save(f"{out}/shots/{key}.png"); row.append(img)
             tiles.append(row)
-        for mode in MODES:
+        for mode in modes:
             key = f"{scr}.{mode}.{int(DEFAULT_ALPHA*100)}"
             blk, wht = Image.open(f"{out}/raw/{key}.black.png"), Image.open(f"{out}/raw/{key}.white.png")
             tiles.append([composite(blk, wht, wl, ZEN_TINT[mode])[0] for wl in walls.values()])
@@ -310,8 +328,11 @@ def report(results, out):
         u = r.get("unity", {})
         lines.append(f"| {r['screen']} | {r['mode']} | {int(r['alpha']*100)} | {r['texts']} | {r['pass'][0]:.0%} | {r['pass'][1]:.0%} | "
                      f"{u.get('surface', 0):.0%} | {u.get('text', 0):.0%} | "
-                     + (f"`{w['sel']}` “{w['t'][:24]}” {min(w['cr'])}:1 (need {w['need']})" if w else "") + " |")
-        if r["alpha"] == DEFAULT_ALPHA and (min(r["pass"]) < PASS_MIN or u.get("surface", 0) < SURFACE_MIN or u.get("text", 0) < TEXT_MIN):
+                     + (f"`{w['sel']}` “{w['t'][:24]}” Lc {min(w['cr'])} (target {round(w.get('target', w['need']))})" if w else "")
+                     + "".join(f" · exempt {k}: {v}" for k, v in r.get("exempt", {}).items()) + " |")
+        ex = r.get("exempt", {})
+        if r["alpha"] == DEFAULT_ALPHA and (min(r["pass"]) < PASS_MIN or u.get("surface", 0) < SURFACE_MIN
+                                            or (u.get("text", 0) < TEXT_MIN and "text" not in ex)):
             fails.append(r["key"])
     open(f"{out}/report.md", "w").write("\n".join(lines) + f"\n\nfails (default α: contrast < {PASS_MIN:.0%}, surface unity < {SURFACE_MIN:.0%}, text unity < {TEXT_MIN:.0%}): {fails or 'none'}\n")
     return fails

@@ -1,103 +1,44 @@
-@import url("../shared/base.css");
+@import url("../shared/glass.css");
 
-/* Google is obfuscating their classes and attributes, which makes it really hard to select elements properly, hence the nested div selectors */
+/* Google Search. Styles by nazzacode (replaces upstream nested-div hacks).
+   glasslab: only hashed tokens (--xhUGwc…) → unstable; use the token-less strategy: neutralise → re-tier → text.
+   Search is content-first (long snippets) → whole page on the content tier. */
 
-body {
-  /* Page Wrapper */
-  > div:first-of-type,
-  > div[data-hveid="1"] {
-    /* Page Header */
-    div[role="navigation"] {
-      background: var(--transparent-background) !important;
-      backdrop-filter: var(--backdrop-blur);
-
-      div[style*="background-color"] {
-        background: none !important;
-      }
-    }
-
-    /* Page Footer */
-    > div:last-child {
-      > div[role="contentinfo"] {
-        background: var(--transparent-background) !important;
-      }
-    }
-  }
+:root.tz-initialized body {
+	background: var(--g-content-abs) !important;
+}
+body :where(:not(img, video, canvas, svg, button, [role="button"], g-img, [style*="background"])) {
+	background-color: transparent !important;
+}
+:is([role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], g-menu, .UjBGL) {
+	background-color: var(--g-popover) !important;
+	backdrop-filter: var(--g-blur);
+	box-shadow: var(--g-shadow) !important;
+}
+form[role="search"] :is(textarea, input)[role="combobox"] {
+	color: var(--g-fg) !important;
+}
+form[role="search"] > div > div:first-child {
+	background-color: var(--g-fill) !important;
+	box-shadow: none !important;
+	border: 1px solid var(--g-line) !important;
 }
 
-form[role="search"] {
-  > div:first-child {
-    > div:first-child {
-      /* Search Bar */
-      > div:first-of-type:not(.logo),
-      > .logo + div {
-        background: var(--transparent-background-dark) !important;
-      }
-    }
-  }
-
-  center {
-    input[type="submit"] {
-      background: var(--transparent-background-dark) !important;
-
-      &:hover {
-        background: var(--transparent-background-darker) !important;
-        border-color: transparent !important;
-      }
-    }
-  }
+/* text */
+body,
+body :where(:not(a, h3, h3 *, [style*="color"])) {
+	color: var(--g-fg) !important; /* incl. spans inside links (tabs, site names) */
 }
-
-/* Search Results Page */
-#searchform {
-  > div:first-child {
-    background-color: var(--transparent-background) !important;
-    backdrop-filter: var(--backdrop-blur);
-  }
+:is(cite, cite *, .VwiC3b, .VwiC3b *, [data-sncf], [data-sncf] *, .MUxGbd, .LEwnzc, .YrbPuc) {
+	color: var(--g-fg-2) !important;
 }
-
-#main {
-  div[style*="top:"]:has(> [role="navigation"]) {
-    background: var(--transparent-background-dark) !important;
-    backdrop-filter: var(--backdrop-blur);
-    box-shadow: none !important;
-    border: 0 !important;
-  }
+a h3,
+a :is(h3 *) {
+	color: var(--g-blue) !important;
 }
-
-#appbar {
-  background: none !important;
+a:visited h3 {
+	color: var(--g-purple) !important;
 }
-
-#search {
-  [data-rspos] > div:first-child,
-  [jscontroller][lang][style*="width:inherit"] {
-    background: var(--transparent-background);
-    border-radius: var(--border-radius-lg);
-    padding: 10px;
-  }
-
-  div:has(> [data-id="mosaic"]) {
-    background: none !important;
-  }
-}
-
-.obcontainer {
-  background: var(--transparent-background) !important;
-  border-radius: var(--border-radius-lg);
-  padding: 8px;
-}
-
-div:has(> .xpdbox) {
-  background: none !important;
-}
-
-#botstuff {
-  div:has(> div > div > a) {
-    background: var(--transparent-background) !important;
-  }
-}
-
-#fbar {
-  background: var(--transparent-background) !important;
+a {
+	color: var(--g-blue) !important;
 }

@@ -1,0 +1,44 @@
+@import url("../shared/glass.css");
+
+/* Claude. Styles by nazzacode. Design tokens (--df-*, --cds-*; glasslab discovery) → shared glass tiers.
+   sidebar = frame · conversation/page = content · composer/panels = card · menus/tooltips = popover. */
+
+:root,
+:root * {
+	/* surfaces */
+	--df-web-sidebar-bg: transparent !important;
+	--cds-surface-0: transparent !important;
+	--df-bg-page: var(--g-content) !important;
+	--cds-page-bg: var(--g-content) !important;
+	--background-color-page: var(--g-content) !important;
+	--cds-surface-1: var(--g-content) !important;
+	--cds-surface-2: var(--g-card) !important;
+	--cds-surface-panel: var(--g-card) !important;
+	--cds-surface-3: var(--g-popover) !important;
+	--cds-surface-popover: var(--g-popover) !important;
+	--cds-tooltip-bg: var(--g-popover) !important;
+	--cds-fill-field: var(--g-fill) !important;
+	--cds-fill-secondary: var(--g-fill) !important;
+	--cds-fill-control: var(--g-fill) !important;
+	--cds-bg-neutral: var(--g-fill) !important;
+	--cds-bg-neutral-chip: var(--g-fill) !important;
+	--cds-bg-user-message: var(--g-fill) !important;
+	--cds-fill-ghost-hover: var(--g-fill-hover) !important;
+	--cds-fill-secondary-hover: var(--g-fill-hover) !important;
+	--cds-fill-control-hover: var(--g-fill-hover) !important;
+	--cds-bg-neutral-hover: var(--g-fill-hover) !important;
+	--cds-bg-neutral-chip-hover: var(--g-fill-hover) !important;
+	--cds-fill-ghost-selected: var(--g-fill-selected) !important;
+
+	/* text + lines */
+	--cds-text-primary: var(--g-fg) !important;
+	--cds-tooltip-fg: var(--g-fg) !important;
+	--cds-text-secondary: var(--g-fg-2) !important;
+	--cds-text-muted: var(--g-fg-3) !important;
+	--cds-border: var(--g-line) !important;
+	--cds-border-strong: var(--g-line-strong) !important;
+	--cds-text-accent: var(--g-blue) !important;
+	--cds-text-danger: var(--g-red) !important;
+	--cds-text-warning: var(--g-orange) !important;
+	--cds-text-success: var(--g-green) !important;
+}

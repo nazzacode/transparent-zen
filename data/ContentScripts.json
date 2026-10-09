@@ -142,7 +142,7 @@
 		},
 		{
 			"name": "Google",
-			"matches": ["[^ ]*://google.com/[^ ]*"],
+			"matches": ["[^ ]*://google.com/[^ ]*", "[^ ]*://www.google.com/[^ ]*", "[^ ]*://www.google.co.uk/[^ ]*"],
 			"css": ["./styles/websites/google.css"],
 			"run_at": "document_start",
 			"favicon": "https://icons.duckduckgo.com/ip3/www.google.com.ico"
@@ -207,8 +207,23 @@
 			"name": "Spotify",
 			"matches": ["[^ ]*://open.spotify.com/[^ ]*"],
 			"css": ["./styles/websites/open.spotify.css"],
+			"glass": "dark",
 			"run_at": "document_start",
 			"favicon": "https://icons.duckduckgo.com/ip3/open.spotify.com.ico"
+		},
+		{
+			"name": "Readwise Reader",
+			"matches": ["[^ ]*://read.readwise.io/[^ ]*"],
+			"css": ["./styles/websites/read.readwise.css"],
+			"run_at": "document_start",
+			"favicon": "https://icons.duckduckgo.com/ip3/read.readwise.io.ico"
+		},
+		{
+			"name": "Claude",
+			"matches": ["[^ ]*://claude.ai/[^ ]*"],
+			"css": ["./styles/websites/claude.ai.css"],
+			"run_at": "document_start",
+			"favicon": "https://icons.duckduckgo.com/ip3/claude.ai.ico"
 		}
 	]
 }
