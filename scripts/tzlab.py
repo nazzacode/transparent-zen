@@ -64,7 +64,8 @@ PROBE = r"""
 """
 # TZ_BACKDROP: what sits behind the page (default magenta = coverage check; e.g. a wallpaper-ish gradient for legibility)
 BACKDROP = os.environ.get("TZ_BACKDROP", "#f0f")
-MAGENTA = f"document.head.insertAdjacentHTML('beforeend','<style id=tzlab>html:root:root{{background:{BACKDROP}!important}}</style>')"
+# CSSOM, not insertAdjacentHTML: Google pages enforce Trusted Types (HTML sinks throw) + CSP (inline <style>)
+MAGENTA = f"document.documentElement.style.setProperty('background', '{BACKDROP}', 'important')"
 
 
 def setup(xpi):
@@ -116,6 +117,8 @@ async def run(urls, out, settle):
             print(f"{slug}: nav {e}")
         await asyncio.sleep(settle)
         await b.eval(ctx, MAGENTA)
+        if os.environ.get("TZ_PRE"):  # JS before capture, e.g. document.documentElement.dataset.tzGlass='light'
+            await b.eval(ctx, os.environ["TZ_PRE"])
         await asyncio.sleep(0.5)
         probe = json.loads(await b.eval(ctx, PROBE) or "{}")
         shot = await b.call("browsingContext.captureScreenshot", context=ctx)

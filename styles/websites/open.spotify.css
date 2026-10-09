@@ -1,0 +1,49 @@
+/* Spotify web player. Styles by nazzacode.
+   Encore tokens (--background-*) drive every surface; classes are hashed → tokens + ids/data-testid only.
+   Dark-only app: both glass modes stay dark (light mode = denser tint so white text holds). */
+
+:root,
+.encore-dark-theme { /* scope only: nested encore-inverted(-light)-set keep their own tokens (white buttons) */
+	--tz-a1: var(--tz-glass-alpha, 0.45);
+	--tz-a3: calc(var(--tz-a1) + 0.4); /* menus, dialogs */
+	--background-base: rgba(18, 18, 18, calc(var(--tz-a1) - 0.15)) !important; /* panels */
+	--background-highlight: rgba(255, 255, 255, 0.07) !important;
+	--background-press: rgba(0, 0, 0, 0.3) !important;
+	--background-elevated-base: rgba(31, 31, 31, calc(var(--tz-a1) + 0.1)) !important; /* cards, inputs */
+	--background-elevated-highlight: rgba(42, 42, 42, calc(var(--tz-a1) + 0.2)) !important;
+	--background-elevated-press: rgba(25, 25, 25, calc(var(--tz-a1) + 0.2)) !important;
+}
+:root[data-tz-glass="light"],
+:root[data-tz-glass="light"] .encore-dark-theme {
+	--tz-a1: calc(var(--tz-glass-alpha, 0.45) + 0.2);
+}
+
+/* one tint for the whole page; html stays clear for Zen's glass */
+html {
+	background: transparent !important;
+}
+body,
+#global-nav-bar,
+[data-testid="root"] > div, /* app shell: hard #000 behind the panels */
+#Desktop_LeftSidebar_Id {
+	background: transparent !important;
+}
+body {
+	background: rgba(0, 0, 0, var(--tz-a1)) !important;
+}
+
+/* per-page colour band behind the header (inline background-color) → soft wash fading into the glass */
+#main-view main > div > div[style*="background-color"] {
+	opacity: 0.5;
+	mask-image: linear-gradient(black, transparent);
+}
+
+/* menus / context menus / dialogs over glass */
+:is([role="menu"], [role="dialog"], [data-testid="context-menu"]):not(#onetrust-banner-sdk, #onetrust-pc-sdk) {
+	background-color: rgba(31, 31, 31, var(--tz-a3)) !important;
+	backdrop-filter: var(--backdrop-blur, blur(20px));
+}
+
+:root * {
+	scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}

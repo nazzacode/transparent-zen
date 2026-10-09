@@ -195,6 +195,20 @@
 			"css": ["./styles/websites/discord.css"],
 			"run_at": "document_start",
 			"favicon": "https://icons.duckduckgo.com/ip3/www.discord.com.ico"
+		},
+		{
+			"name": "Google Calendar",
+			"matches": ["[^ ]*://calendar.google.com/[^ ]*"],
+			"css": ["./styles/websites/calendar.google.css"],
+			"run_at": "document_start",
+			"favicon": "https://icons.duckduckgo.com/ip3/calendar.google.com.ico"
+		},
+		{
+			"name": "Spotify",
+			"matches": ["[^ ]*://open.spotify.com/[^ ]*"],
+			"css": ["./styles/websites/open.spotify.css"],
+			"run_at": "document_start",
+			"favicon": "https://icons.duckduckgo.com/ip3/open.spotify.com.ico"
 		}
 	]
 }
