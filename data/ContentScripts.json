@@ -142,7 +142,7 @@
 		},
 		{
 			"name": "Google",
-			"matches": ["[^ ]*://google.com/[^ ]*", "[^ ]*://www.google.com/[^ ]*", "[^ ]*://www.google.co.uk/[^ ]*"],
+			"matches": ["^https://www\\.google\\.(com|co\\.uk)/search"],
 			"css": ["./styles/websites/google.css"],
 			"run_at": "document_start",
 			"favicon": "https://icons.duckduckgo.com/ip3/www.google.com.ico"

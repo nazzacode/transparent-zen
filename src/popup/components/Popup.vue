@@ -99,7 +99,10 @@ const changeSetting = (event: Event) => {
 				sendMessageToActiveTabs({ action: "toggleSiteSpecificSettings", value: input.checked });
 				break;
 			case "glass-theme":
-				if (extensionSettings.value) extensionSettings.value.glassTheme = input.value as "auto" | "dark" | "light";
+				if (extensionSettings.value) {
+					extensionSettings.value.glassTheme = input.value as "auto" | "dark" | "light";
+					extensionSettings.value.glassThemeV2 = true;
+				}
 				sendMessageToAllTabs({ action: "changeGlassTheme", value: input.value });
 				break;
 			case "glass-opacity":
@@ -237,7 +240,7 @@ const openSettingsPage = () => {
 					<div class="setting">
 						<span class="label">Glass</span>
 						<div class="value">
-							<select name="glass-theme" :value="extensionSettings.glassTheme ?? DEFAULT_SETTINGS.glassTheme" @input="changeSetting">
+							<select name="glass-theme" :value="extensionSettings.glassThemeV2 ? extensionSettings.glassTheme : 'auto'" @input="changeSetting">
 								<option value="auto">Auto (follow desktop)</option>
 								<option value="dark">Dark</option>
 								<option value="light">Light</option>

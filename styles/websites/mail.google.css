@@ -7,14 +7,14 @@
    Exception (as Apple Mail): message bodies are user HTML with their own colours → light "paper" card in both modes. */
 
 /* 1. neutralise hard-coded fills (keep buttons, inline-coloured labels/avatars, images) */
-body :where(:not([role="button"], [role="link"], button, img, [style*="background"], .qj, .aEe, .a3s, .a3s *)) { /* zero specificity → role rules win */
+body :where(div, section, header, nav, aside, main, footer, ul, li, table, tbody, thead, tr, td, form):where(:not([role="button"], [role="link"], [role="progressbar"], [role="switch"], [style*="background"], .qj, .aEe, .a3s, .a3s *)) { /* containers only, zero specificity → role rules win */
 	background-color: transparent !important;
 }
 
 /* 2. re-tier by role */
 [role="main"] {
 	background-color: var(--g-content) !important; /* message list + reading pane */
-	border-radius: 16px;
+	border-radius: var(--g-radius-pane);
 }
 :is([role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], [role="alertdialog"]) {
 	background-color: var(--g-popover) !important;
@@ -42,7 +42,7 @@ tr[role="row"]:is([aria-selected="true"], .x7) {
 
 /* 3. text: shared palette (primary inherits; Gmail's secondary classes → fg-2) */
 body,
-body :where(:not(.a3s, .a3s *, [style*="color"], a[href^="mailto"], .boq, .byT)) {
+body :where(:not(.a3s, .a3s *, [style*="color"], a[href^="mailto"], .boq, .byT, button, button *, [role="button"], [role="button"] *)) { /* filled buttons keep their label colour */
 	color: var(--g-fg) !important;
 }
 :is(.y2, .bsU, .xW, .xY, .g3, .go, .g2, .Dj, .ts, .byL, .aqj, .bA4, .afn, .ajn, .bog + .y2) {
@@ -66,8 +66,8 @@ body :where(:not(.a3s, .a3s *, [style*="color"], a[href^="mailto"], .boq, .byT))
 .a3s {
 	background-color: var(--g-paper) !important;
 	color: var(--g-paper-fg) !important;
-	border-radius: 12px;
-	padding: 12px 16px !important;
+	border-radius: var(--g-radius-card);
+	padding: var(--g-pad-card) !important;
 }
 
 /* loading screen keeps an opaque base (the "M" animation is drawn with cut-outs) */

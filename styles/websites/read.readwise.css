@@ -3,8 +3,11 @@
 /* Readwise Reader. Styles by nazzacode. Semantic tokens (glasslab discovery) → shared glass tiers.
    sidebars/canvas = frame · library list + reader pane = content · cards/inputs = fills · menus/modals = popover. */
 
+/* scope: where Reader declares tokens (glasslab: value-change walk) — :root/body, plus the document text root, which
+   redefines --reading-text-* → no per-element custom-property maps on large DOMs (was :root *) */
 :root,
-:root * {
+body,
+#document-text-content {
 	/* surfaces */
 	--background-canvas: transparent !important;
 	--sidebar-background: transparent !important;

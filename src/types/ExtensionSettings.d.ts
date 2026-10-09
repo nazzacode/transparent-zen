@@ -18,6 +18,7 @@ export type ExtensionSettings = {
 		siteSpecificSettings: Array<SiteSpecificSetting>;
 		glassTheme?: "auto" | "dark" | "light"; // auto = follow prefers-color-scheme (desktop theme)
 		glassOpacity?: number;
+		glassThemeV2?: boolean; // set once the user picks a mode in the auto-aware popup (migration from old "dark" default)
 	};
 };
 

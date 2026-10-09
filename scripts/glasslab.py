@@ -15,14 +15,15 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import tzlab  # setup(), Bidi, PORT, LAB
 from PIL import Image
 
-ALPHAS = [0.2, 0.45, 0.7]          # popup slider 20 / 45 (default) / 70 %
+ALPHAS = [0.1, 0.45, 0.9]          # popup slider extremes 10 / 90 % + default 45 %
 DEFAULT_ALPHA = 0.45
 MODES = ["dark", "light"]
 # web-app window tint under the page (dotfiles/zen/userChrome.css --webapp-tint), per mode
 ZEN_TINT = {"dark": (0, 0, 0, 0), "light": (0, 0, 0, 0)}  # web-app window tint: none, the page owns all tint (glass.css)
 # blurred-wallpaper luminance extremes measured over all 22 live wallpapers (p5≈0, p95≈221)
 BOUNDS = [(0, 0, 0), (222, 222, 222)]
-PASS_MIN = 0.9                      # share of text (by chars) that must meet its APCA floor at default alpha
+PASS_MIN = 0.9                      # share of text (by chars) that must meet its APCA floor
+EXEMPT_MAX = 0.1                    # text exempted for sitting on images/gradients above this share → fail (no passing by exemption) at default alpha
 WALL_DIR = os.path.expanduser("~/.cache/zen-stage/glass/wall")
 WALLS = ["earth-iss", "new-york-day", "liwa-dune-fields", "europe-at-night", "grand-canyon-river-valley"]
 
@@ -90,20 +91,27 @@ PROBE = r"""
     if (i < 0) continue;
     let img = false, chip = false; const layers = [];
     for (let k = stack.length - 1; k >= i; k--) { if (stack[k] === document.documentElement) continue; const s = getComputedStyle(stack[k]);
-      if (s.backgroundImage !== 'none') img = true;  // image or gradient behind text: colour unknowable → exempt
+      // image/gradient counts only if nothing opaque paints above it (bottom→top walk: an opaque layer resets it)
+      if (s.backgroundImage !== 'none') img = true;
+      else if (P(s.backgroundColor)[3] >= .95) img = false;
       const c = P(s.backgroundColor); if (c[3] > 0) layers.push(c);
       // pseudo-element fills paint above their element's own background (pill buttons, cards drawn with ::before)
       for (const pe of ['::before', '::after']) { const ps = getComputedStyle(stack[k], pe);
-        if (ps.content !== 'none' && ps.position === 'absolute') { const pc = P(ps.backgroundColor); if (pc[3] > 0) layers.push(pc); } }
+        // only pseudo fills that cover the element (inset 0 / full size), e.g. pill buttons
+        if (ps.content !== 'none' && ps.position === 'absolute' && (ps.inset === '0px' || (ps.top === '0px' && ps.left === '0px'
+            && (ps.width === stack[k].getBoundingClientRect().width + 'px' || ps.right === '0px')))) {
+          const pc = P(ps.backgroundColor); if (pc[3] > 0) layers.push(pc); } }
       if (c[3] >= .85 && (stack[k].getAttribute('style') || '').includes('background-color')) chip = true;  // site-coloured chip
       if (c[3] >= .85 && Math.max(c[0], c[1], c[2]) - Math.min(c[0], c[1], c[2]) > 60) chip = true; }  // saturated fill = accent control
+    // site data colour on the nearest inline-coloured ancestor (chip colour may sit outside the hit-test stack)
+    { const anc = el.closest('[style*="background-color"]'); if (anc && P(getComputedStyle(anc).backgroundColor)[3] >= .85) chip = true; }
     const fg = P(cs.color), px = parseFloat(cs.fontSize), bold = +cs.fontWeight >= 600;
     // APCA floors: <16px body Lc75 (short labels ≤20 chars = non-body Lc60), <24px Lc60, larger Lc45; bold eases one step
     // control labels (buttons/tabs/menu items/options) are labels whatever their length
-    const label = t.length <= 20 || !!el.closest('button, [role=button], [role=tab], [role=option], [role=menuitem], [role=link] [role=text]');
+    const label = t.length <= 20 || !!el.closest('button, [role=button], [role=tab], [role=option], [role=menuitem]');
     const tier = (px < 16 ? (label ? 1 : 0) : px < 24 ? 1 : 2) + (bold ? 1 : 0), need = [75, 60, 45, 45][Math.min(tier, 3)];
     const res = bounds.map(bd => { let bg = over(tint, bd); for (const l of layers) bg = over(l, bg); return apca(over(fg, bg), bg); });
-    runs.push({ sel: sel(el), t: t.slice(0, 40), n: Math.min(t.length, 200), px: Math.round(px), need, img,
+    runs.push({ sel: sel(el), t: t.slice(0, 40), x: Math.round(x), y: Math.round(y), n: Math.min(t.length, 200), px: Math.round(px), need, img,
       cr: res.map(v => Math.round(v)), fg: cs.color, chip });
   }
   return JSON.stringify(runs);
@@ -190,6 +198,12 @@ UNITY = r"""
 """
 
 
+def rkey(r):
+    """identity of a text run across native/glass renders: selector + text + position (same layout) — repeated
+    labels (e.g. several identical calendar chips) must not collide"""
+    return (r["sel"], r["t"], r.get("x", 0) // 4, r.get("y", 0) // 4)
+
+
 def neutral_text_conformance(runs, fgs, tol=10):
     """share of neutral text chars whose colour is a glass foreground (saturated text = accent, ignored)"""
     def rgb(c):
@@ -203,8 +217,7 @@ def neutral_text_conformance(runs, fgs, tol=10):
         if any(f and all(abs(c[i] - f[i]) <= tol for i in range(3)) for f in fgs): ok += r["n"]
         else:
             k = f"{r['fg']} {r['sel']}"; foreign[k] = foreign.get(k, 0) + r["n"]
-    neutral_text_conformance.foreign = sorted(foreign.items(), key=lambda x: -x[1])[:6]
-    return ok / tot if tot else 1.0
+    return (ok / tot if tot else 1.0), sorted(foreign.items(), key=lambda x: -x[1])[:6]
 
 
 def composite(black, white, wall, tint):
@@ -251,7 +264,7 @@ async def run(screens, out):
         open(f"{out}/shots/{sc['id']}.native.png", "wb").write(base64.b64decode(nat["data"]))
         tokens = json.loads(await b.eval(ctx, DISCOVER) or "[]")
         json.dump(tokens, open(f"{out}/tokens-{sc['id']}.json", "w"), indent=1)
-        native = {(r["sel"], r["t"]): min(r["cr"]) for r in json.loads(
+        native = {rkey(r): (min(r["cr"]), r["fg"]) for r in json.loads(
             await b.eval(ctx, f"({PROBE})({json.dumps(BOUNDS)},[0,0,0,0])") or "[]")}
         await b.eval(ctx, "window.__tz.forEach(l=>document.head.append(l));document.documentElement.classList.add('tz-initialized')")
         await asyncio.sleep(0.8)
@@ -265,17 +278,23 @@ async def run(screens, out):
                 blk.save(f"{out}/raw/{key}.black.png"); wht.save(f"{out}/raw/{key}.white.png")
                 await b.eval(ctx, "document.documentElement.style.removeProperty('background')")
                 runs = json.loads(await b.eval(ctx, f"({PROBE})({json.dumps(BOUNDS)},{json.dumps(list(ZEN_TINT[mode]))})") or "[]")
-                # exempt: text on site-coloured chips and on images (colour unknowable from CSS) — reported, not scored
-                chips = [r for r in runs if r.get("chip") or r.get("img")]; runs = [r for r in runs if not (r.get("chip") or r.get("img"))]
+                # exempt (reported, not scored): text on site-coloured chips / images / accent fills — but ONLY if glass left
+                # its colour as native; if our CSS recoloured it (e.g. a filled button label), it's ours → scored
+                def exempt(r):
+                    nv = native.get(rkey(r))
+                    return (r.get("chip") or r.get("img")) and nv is not None and nv[1] == r["fg"]
+                json.dump([dict(r, native=native.get(rkey(r))) for r in runs], open(f"{out}/raw/{key}.runs.json", "w"))
+                chips = [r for r in runs if exempt(r)]; runs = [r for r in runs if not exempt(r)]
+                # cap applies to IMAGE exemptions (could hide whole regions); site data-colour chips are legitimately content
+                exempt_share = sum(r["n"] for r in chips if r.get("img") and not r.get("chip")) / max(1, sum(r["n"] for r in chips + runs))
                 # target per run: its APCA floor, relaxed to the site's own native contrast (−10%) where the native
                 # design is already below the floor → glass must never read worse than the original site
                 for r in runs:
-                    nv = native.get((r["sel"], r["t"]))
-                    r["native"] = nv
-                    r["target"] = r["need"] if nv is None else min(r["need"], nv * 0.9)
+                    nv = native.get(rkey(r))
+                    r["native"] = nv and nv[0]
+                    r["target"] = r["need"] if nv is None else min(r["need"], nv[0] * 0.9)
                 uni = json.loads(await b.eval(ctx, UNITY) or "{}")
-                uni["text"] = neutral_text_conformance(runs, uni.get("fgs", []))
-                uni["text_foreign"] = neutral_text_conformance.foreign
+                uni["text"], uni["text_foreign"] = neutral_text_conformance(runs, uni.get("fgs", []))
                 tot = sum(r["n"] for r in runs) or 1
                 ok = [sum(r["n"] for r in runs if r["cr"][k] >= r["target"]) / tot for k in range(len(BOUNDS))]
                 worst = sorted(runs, key=lambda r: min(r["cr"]) / max(r["target"], 1))[:8]
@@ -286,8 +305,8 @@ async def run(screens, out):
                         g["chars"] += r["n"]
                 failing = sorted(agg.values(), key=lambda g: -g["chars"])[:10]
                 results.append({"key": key, "screen": sc["id"], "mode": mode, "alpha": a, "url": sc["url"],
-                                "texts": len(runs), "chips": len(chips), "unity": uni, "exempt": sc.get("exempt", {}), "pass": [round(v, 3) for v in ok], "worst": worst, "failing": failing})
-                print(f"{key:28s} texts {len(runs):3d}  contrast(black,bright) {ok[0]:4.0%} {ok[1]:4.0%}  "
+                                "texts": len(runs), "chips": len(chips), "exempt_share": round(exempt_share, 3), "unity": uni, "exempt": sc.get("exempt", {}), "pass": [round(v, 3) for v in ok], "worst": worst, "failing": failing})
+                print(f"{key:28s} texts {len(runs):3d} exempt {exempt_share:4.0%}  contrast(black,bright) {ok[0]:4.0%} {ok[1]:4.0%}  "
                       f"unity surface {uni.get('surface', 0):4.0%} text {uni['text']:4.0%}", flush=True)
     await ws.close()
     return results
@@ -332,9 +351,9 @@ def report(results, out):
                      + "".join(f" · exempt {k}: {v}" for k, v in r.get("exempt", {}).items()) + " |")
         ex = r.get("exempt", {})
         if r["alpha"] == DEFAULT_ALPHA and (min(r["pass"]) < PASS_MIN or u.get("surface", 0) < SURFACE_MIN
-                                            or (u.get("text", 0) < TEXT_MIN and "text" not in ex)):
+                                            or (u.get("text", 0) < TEXT_MIN and "text" not in ex) or r.get("exempt_share", 0) > EXEMPT_MAX):
             fails.append(r["key"])
-    open(f"{out}/report.md", "w").write("\n".join(lines) + f"\n\nfails (default α: contrast < {PASS_MIN:.0%}, surface unity < {SURFACE_MIN:.0%}, text unity < {TEXT_MIN:.0%}): {fails or 'none'}\n")
+    open(f"{out}/report.md", "w").write("\n".join(lines) + f"\n\nfails (default α: contrast < {PASS_MIN:.0%}, surface unity < {SURFACE_MIN:.0%}, text unity < {TEXT_MIN:.0%}, exempt > {EXEMPT_MAX:.0%}): {fails or 'none'}\n")
     return fails
 
 

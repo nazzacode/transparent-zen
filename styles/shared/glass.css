@@ -8,17 +8,17 @@
 
    tier      role (Apple)                                   alpha (s = slider)
    window    page backdrop, gaps between panes              s
-   chrome    sidebars, top bars, nav rails (glass layer)    clamp(.50, s+.10, .92)   light floor .75
+   frame     sidebars, top bars, nav rails (glass layer)    clamp(.50, s+.10, .92)   light floor .75
    content   lists, reading panes, grids (content layer)    clamp(.78, s+.25, .96)   light floor .88
    popover   menus, dialogs, tooltips ("thicker" glass)     clamp(.85, s+.35, .96)   light floor .88  + blur
    rows / controls: fixed overlay fills (no slider); text: solid colours only, never low-alpha text on glass.
 
    Stacking (typical app = frame + pane): body carries the FRAME tint (--g-frame = chrome tier, absolute), panes sit on
    it with compensated fills ((a - frame) / (1 - frame)) so each region lands on its tier's TOTAL alpha.
-     --g-frame     body / app shell                          (chrome tier, absolute)
+     --g-frame     body / app shell                          (frame tier, absolute) — default body tint
      --g-content   pane inside the frame                     (content tier total)
      --g-*-abs     surfaces floating over clear glass (rare)
-   A site whose design is "content on wallpaper" with no frame can set body to --g-window instead. */
+   Body tint is a token: content-first sites (search, feeds) set --g-body: var(--g-content-abs); media-first keep frame. */
 
 :root {
 	--g-s: var(--tz-glass-alpha, 0.45);
@@ -54,6 +54,9 @@
 	--g-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.08); /* specular top edge */
 	--g-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 	--g-blur: blur(24px) saturate(160%);
+	--g-radius-pane: 16px; /* content pane inside the frame (concentric with the 12–16px window) */
+	--g-radius-card: 12px;
+	--g-pad-card: 12px 16px;
 	--g-scrim: rgba(0, 0, 0, 0.35); /* Apple's dimming layer */
 	--g-scrollbar: rgba(255, 255, 255, 0.28) transparent;
 
@@ -95,13 +98,15 @@
 	--g-scrollbar: rgba(0, 0, 0, 0.25) transparent;
 }
 
-/* accessibility: reduce transparency → same colours, solid */
+/* accessibility: reduce transparency → same colours, solid (selector matches light mode's specificity; no 0/0 maths) */
 @media (prefers-reduced-transparency: reduce) {
-	:root {
-		--g-s: 1;
-		--g-floor-chrome: 1;
-		--g-floor-content: 1;
-		--g-floor-popover: 1;
+	:root,
+	:root[data-tz-glass] {
+		--g-a-window: 1;
+		--g-a-chrome: 1;
+		--g-a-content: 1;
+		--g-a-popover: 1;
+		--g-a-content-on: 0;
 	}
 }
 
@@ -118,11 +123,7 @@
 	background: transparent !important;
 }
 :root.tz-initialized body {
-	background: var(--g-frame) !important;
-}
-:root.tz-initialized * {
-	scrollbar-color: var(--g-scrollbar);
+	background: var(--g-body, var(--g-frame)) !important;
 }
 
-/* helper classes for site files that can't use tokens (applied via selectors, not markup) are not provided on
-   purpose: map regions with selectors in the site file, e.g.  .sidebar { background: var(--g-chrome) !important; } */
+/* no helper classes on purpose: site files map regions with selectors, e.g.  [role="main"] { background: var(--g-content) !important; } */

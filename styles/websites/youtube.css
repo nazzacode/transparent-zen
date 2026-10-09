@@ -2,14 +2,20 @@
 
 /* YouTube. Styles by nazzacode (replaces upstream). Media-first (Apple Music pattern): frame glass, thumbnails float on it.
    glasslab: colours now come from hashed build tokens (--t3e41…) → unstable → token-less strategy:
-   tint the app shell, neutralise fills, re-tier controls, text from the shared palette. */
+   clear page containers (not controls/player), re-tier controls, text from the shared palette (buttons keep theirs). */
 
-ytd-app {
-	background: var(--g-frame) !important;
+/* YouTube suppresses body's background (glasslab: no tint layer under text) → the frame tint lives on ytd-app,
+   body set to none so it can never double. Page containers clear; player (#movie_player) untouched. */
+:root {
+	--g-body: transparent;
 }
-ytd-app :where(:not(img, video, canvas, yt-image, yt-img-shadow, button, [style*="background"], .ytSpecTouchFeedbackShapeFill,
-		ytd-thumbnail, ytd-thumbnail *, yt-thumbnail-view-model, yt-thumbnail-view-model *, .ytp-chrome-bottom *,
-		#scrim, tp-yt-paper-progress *, .yt-badge-shape, [class*="ytBadgeShape"], [class*="Badge"], .ytp-progress-bar *)) {
+ytd-app {
+	background-color: var(--g-frame) !important;
+}
+ytd-app :where(div, section, header, nav, aside, main, ytd-masthead, ytd-browse, ytd-page-manager, ytd-rich-grid-renderer,
+		ytd-two-column-browse-results-renderer, ytd-guide-renderer, ytd-mini-guide-renderer, ytd-feed-filter-chip-bar-renderer,
+		tp-yt-app-drawer):where(:not(#movie_player, #movie_player *, ytd-thumbnail *, yt-thumbnail-view-model *, [style*="background"],
+		.ytSpecTouchFeedbackShapeFill, #scrim, tp-yt-paper-progress *, [class*="Badge"], [role="progressbar"])) {
 	background-color: transparent !important;
 }
 tp-yt-app-drawer #scrim {
@@ -28,6 +34,11 @@ tp-yt-app-drawer #scrim {
 	background-color: var(--g-fill) !important;
 	border-color: var(--g-line) !important;
 }
+/* we re-tier chip fills → we own their labels too */
+:is(yt-chip-cloud-chip-renderer, .ytChipShapeChip):not([selected], [aria-selected="true"], .ytChipShapeActive),
+:is(yt-chip-cloud-chip-renderer, .ytChipShapeChip):not([selected], [aria-selected="true"], .ytChipShapeActive) * {
+	color: var(--g-fg) !important;
+}
 /* selected chip = inverted capsule */
 :is(yt-chip-cloud-chip-renderer[selected], .ytChipShapeActive) {
 	background-color: var(--g-fg) !important;
@@ -43,7 +54,8 @@ ytd-guide-entry-renderer[active] a {
 
 /* text */
 ytd-app :where(:not([style*="color"], .yt-badge-shape *, [class*="Badge"] *, yt-chip-cloud-chip-renderer[selected] *,
-		.ytChipShapeActive, .ytChipShapeActive *, .ytp-chrome-bottom *)) {
+		.ytChipShapeActive, .ytChipShapeActive *, #movie_player, #movie_player *, button, button *, [role="button"], [role="button"] *,
+		yt-button-shape *)) {
 	color: var(--g-fg) !important;
 }
 :is(#metadata-line, #metadata-line *, #byline-container, #byline-container *, .ytContentMetadataViewModelMetadataText,
@@ -53,11 +65,7 @@ ytd-app :where(:not([style*="color"], .yt-badge-shape *, [class*="Badge"] *, yt-
 :is(.ytSearchboxComponentInputBox input, .ytSearchboxComponentInputBox) {
 	color: var(--g-fg) !important;
 }
-:root:not([data-tz-glass="light"]) :is(yt-icon, .yt-icon-shape) {
-	color: var(--g-fg) !important;
-	fill: currentColor;
-}
-:root[data-tz-glass="light"] :is(yt-icon, .yt-icon-shape) {
+:is(yt-icon, .yt-icon-shape):not(button *, yt-button-shape *, #movie_player *) {
 	color: var(--g-fg) !important;
 	fill: currentColor;
 }

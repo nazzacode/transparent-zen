@@ -19,13 +19,16 @@ class TransparentZen {
 	private isSupportedWebsite = false;
 
 	constructor() {
+		this.applyGlass(); // synchronous first pass (auto → prefers-color-scheme) → no dark flash on a light desktop
 		this.initLoadingScreen();
 		// biome-ignore format: readability
 		this.checkIfWebsiteAlreadySupported().then(contentScript => {
 			browser.storage.local.get("transparentZenSettings").then(async (settings) => {
 				this.transparentZenSettings = (settings as ExtensionSettings).transparentZenSettings;
 				this.siteGlass = contentScript ? contentScript.glass : undefined;
-				this.applyGlass(this.transparentZenSettings?.glassTheme, this.transparentZenSettings?.glassOpacity);
+				// pre-auto builds persisted "dark" as the default → treat as auto until the user picks in the new popup
+				const s = this.transparentZenSettings;
+				this.applyGlass(s?.glassThemeV2 ? s.glassTheme : "auto", s?.glassOpacity);
 				if (!contentScript) {
 					console.info("Website is not supported by Transparent Zen");
 					this.webInspector = new WebInspector(this.transparentZenSettings);
@@ -278,8 +281,9 @@ class TransparentZen {
 		}
 	}
 
-	// glass mode for site styles (styles/shared/glass.css): :root[data-tz-glass=dark|light] + --tz-glass-alpha, set early → no flash.
-	// "auto" (default) follows prefers-color-scheme, i.e. the desktop light/dark theme, live.
+	// glass mode for site styles (styles/shared/glass.css): :root[data-tz-glass=dark|light] + --tz-glass-alpha.
+	// "auto" (default) follows prefers-color-scheme, i.e. the desktop light/dark theme, live; a site's registry
+	// "glass" (dark-only apps) overrides both. First pass runs synchronously in the constructor.
 	private glassTheme: "auto" | "dark" | "light" = "auto";
 	private siteGlass?: "dark" | "light"; // per-site override from data/ContentScripts.json
 	private static readonly lightScheme = window.matchMedia("(prefers-color-scheme: light)");

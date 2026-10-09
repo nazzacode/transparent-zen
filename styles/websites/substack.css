@@ -34,8 +34,8 @@
 }
 
 /* content-first: one content-tier tint for the whole page */
-:root.tz-initialized body {
-	background: var(--g-content-abs) !important;
+:root {
+	--g-body: var(--g-content-abs);
 }
 
 /* editor (no dark mode of its own): text follows the glass foreground */

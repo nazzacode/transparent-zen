@@ -91,7 +91,7 @@ figcaption{{font-size:12px;color:var(--fg2);margin-top:4px}} .shot{{margin:22px 
 <tr><td>2</td><td>Google Calendar</td><td>749 / 131</td><td>shared GM3 map, tested (week, month, event)</td></tr>
 <tr><td>3</td><td>Gmail</td><td>193 / 49</td><td>rewritten, tested (inbox + thread)</td></tr>
 <tr><td>4</td><td>Linear</td><td>837 / 84</td><td>not done: not logged in on Zen</td></tr>
-<tr><td>5</td><td>Claude</td><td>760 / 50</td><td>new style, tested (new chat + recents)</td></tr>
+<tr><td>5</td><td>Claude</td><td>760 / 50</td><td>new style; passed all targets before the code-review round; final retest blocked by Cloudflare's bot check (open Claude once in Zen to refresh)</td></tr>
 <tr><td>6</td><td>X</td><td>5148 / 221</td><td>not done: not logged in on Zen</td></tr>
 <tr><td>7</td><td>Google Search</td><td>4601 / 718</td><td>rewritten + www/co.uk matching fixed, tested</td></tr>
 <tr><td>8</td><td>Substack</td><td>896 / 150</td><td>ported to shared tokens, tested</td></tr>
@@ -115,14 +115,16 @@ figcaption{{font-size:12px;color:var(--fg2);margin-top:4px}} .shot{{margin:22px 
 <li><b>Surface unity</b>: topmost painted surface at a 20×14 grid must be a shared tier colour. Pass ≥ 90%.</li>
 <li><b>Text unity</b>: neutral text must be a shared foreground. Pass ≥ 85%.</li>
 <li>Exempt (reported, not scored): text on site data colours (calendar chips, labels), images, gradients, accent buttons.</li>
-<li><b>Causal token discovery</b>: tokens are set to a sentinel colour to prove they actually drive a surface, before mapping them.</li></ul>
+<li><b>Causal token discovery</b>: tokens are set to a sentinel colour to prove they actually drive a surface, before mapping them.</li>
+<li>Exemptions are void when glass changed the text's colour (so recoloured buttons are scored), and a screen fails if more than 10% of its text is exempted for sitting on images.</li>
+<li>Text runs are matched to their native twin by selector + text + position; slider swept at 10 / 45 / 90%.</li></ul>
 Rerun: <code>nix-shell -p "python3.withPackages(p:[p.websockets p.pillow p.numpy])" --run "python3 scripts/glasslab.py builds/*.zip OUT [filter]"</code></div>
 <div class="card"><table><tr><th>screen</th><th>mode</th><th>slider</th><th>texts</th><th>contrast · dark bg</th><th>contrast · bright bg</th><th>surface unity</th><th>text unity</th></tr>{''.join(rows)}</table></div>
 
 <h2>Screens</h2>
 <p class="lead">native → dark glass → light glass, slider 45%, on earth-iss (your current wallpaper).</p>
 {''.join(gal)}
-<h2>Slider</h2><div class="wide"><img src="gallery/strip-slider-gmail.jpg"><p class="lead">Gmail thread at 20 / 45 / 70%: frame glass moves; content floors hold.</p></div>
+<h2>Slider</h2><div class="wide"><img src="gallery/strip-slider-gmail.jpg"><p class="lead">Gmail thread at 10 / 45 / 90%: frame glass moves; content floors hold.</p></div>
 <h2>Across wallpapers</h2><div class="wide"><img src="gallery/sheet-reader-doc.jpg"><p class="lead">Reader document: rows = dark/light × slider, then each mode across 5 wallpapers.</p></div>
 </main></body></html>"""
     open(f"{run}/report.html", "w").write(page)

@@ -11,9 +11,9 @@
 	--gm3-sys-color-background: transparent !important;
 	--gm3-sys-color-surface-container-low: transparent !important;
 	/* main pane surfaces (site file may clear these and paint one region instead, see calendar.google.css) */
-	--gm3-sys-color-surface: var(--g-content) !important;
-	--gm3-sys-color-surface-bright: var(--g-content) !important;
-	--gm3-sys-color-surface-container-lowest: var(--g-content) !important;
+	--gm3-sys-color-surface: var(--tz-gm3-pane, var(--g-content)) !important; /* site may set --tz-gm3-pane */
+	--gm3-sys-color-surface-bright: var(--tz-gm3-pane, var(--g-content)) !important;
+	--gm3-sys-color-surface-container-lowest: var(--tz-gm3-pane, var(--g-content)) !important;
 	/* menus, dialogs, search field */
 	--gm3-sys-color-surface-container: var(--g-popover) !important;
 	--gm3-sys-color-surface-container-high: var(--g-popover) !important;
@@ -59,21 +59,5 @@
 	--gm3-sys-color-inverse-surface-rgb: 227, 227, 227 !important;
 	--gm3-sys-color-inverse-on-surface: #303030 !important;
 	--gm3-sys-color-inverse-on-surface-rgb: 48, 48, 48 !important;
-}
-
-/* event chips: colour comes inline (user's calendar colours); Google picks their text from surface (dark chips → white)
-   or on-surface (pastel → dark). Restore Google's light tokens inside them → chips render exactly as Google draws them. */
-[style*="background-color"],
-[style*="background-color"] * {
-	--gm3-sys-color-background: #fff !important;
-	--gm3-sys-color-surface: #fff !important;
-	--gm3-sys-color-surface-bright: #fff !important;
-	--gm3-sys-color-surface-container-lowest: #fff !important;
-	--gm3-sys-color-surface-container-low: #f8fafd !important;
-	--gm3-sys-color-on-background: #1f1f1f !important;
-	--gm3-sys-color-on-surface: #1f1f1f !important;
-	--gm3-sys-color-on-surface-rgb: 31, 31, 31 !important;
-	--gm3-sys-color-on-surface-variant: #444746 !important;
-	--gm3-sys-color-on-surface-variant-rgb: 68, 71, 70 !important;
 }
 

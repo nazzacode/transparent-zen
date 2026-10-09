@@ -4,10 +4,10 @@
    glasslab: only hashed tokens (--xhUGwc…) → unstable; use the token-less strategy: neutralise → re-tier → text.
    Search is content-first (long snippets) → whole page on the content tier. */
 
-:root.tz-initialized body {
-	background: var(--g-content-abs) !important;
+:root {
+	--g-body: var(--g-content-abs); /* content-first */
 }
-body :where(:not(img, video, canvas, svg, button, [role="button"], g-img, [style*="background"])) {
+body :where(div, section, header, nav, aside, main, footer, ul, li, table, tbody, thead, tr, td, form):where(:not([role="button"], [role="progressbar"], [role="switch"], g-img, [style*="background"])) { /* containers only */
 	background-color: transparent !important;
 }
 :is([role="dialog"], [role="menu"], [role="listbox"], [role="tooltip"], g-menu, .UjBGL) {
@@ -26,7 +26,7 @@ form[role="search"] > div > div:first-child {
 
 /* text */
 body,
-body :where(:not(a, h3, h3 *, [style*="color"])) {
+body :where(:not(a, h3, h3 *, [style*="color"], button, button *, [role="button"], [role="button"] *)) {
 	color: var(--g-fg) !important; /* incl. spans inside links (tabs, site names) */
 }
 :is(cite, cite *, .VwiC3b, .VwiC3b *, [data-sncf], [data-sncf] *, .MUxGbd, .LEwnzc, .YrbPuc) {
